@@ -31,5 +31,10 @@ module.exports.login=async(req,res,next)=>{
       return res.status(401).json({error:'Invalid email or password'});
    }
    const token=await user.generateAuthToken();
+   res.cookie('token',token)
    res.status(200).json({user,token});
+}
+
+module.exports.profile=async(req,res,next)=>{
+    res.status(200).json(req.user)
 }
