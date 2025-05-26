@@ -13,7 +13,8 @@ router.post('/login',[
     body('password').isLength({min:6}).withMessage("Password is invalid")
 ],userController.login)
 
-router.get('/profile',authMiddleware.isAuth,userController.profile)
+router.get('/profile', authMiddleware.isAuth, userController.profile)
+router.get('/logout', authMiddleware.isAuth, userController.logoutUser)
 module.exports=router;
 
 
