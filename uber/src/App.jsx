@@ -6,7 +6,8 @@ import UserSignup from './pages/UserSignup'
 import UserLogin from './pages/UserLogin'
 import Home from './pages/Start.jsx'
 import Start from './pages/Start.jsx'
-
+import UserProtectedWrapper from './pages/UserProtectedWrapper.jsx'
+import UserLogout from './pages/UserLogout.jsx'
 function App() {
   return (
     <div>
@@ -16,7 +17,16 @@ function App() {
         <Route path='/signup' element={<UserSignup/>} />
         <Route path='/CaptainLogin' element={<CaptionLogin/>} />
         <Route path='/CaptainSignup' element={<CaptainSignup />} />
-        <Route path='/home' element={<Home />} />
+        <Route path='/home' element={
+          <UserProtectedWrapper>
+            <Home />
+            </UserProtectedWrapper>
+        } />
+        <Route path='/user/logout' element={
+          <UserProtectedWrapper>
+            <UserLogout />
+          </UserProtectedWrapper>
+        } />
         {/* Add more routes as needed */}
       </Routes>
     </div>
