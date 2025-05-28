@@ -8,6 +8,9 @@ import Home from './pages/Start.jsx'
 import Start from './pages/Start.jsx'
 import UserProtectedWrapper from './pages/UserProtectedWrapper.jsx'
 import UserLogout from './pages/UserLogout.jsx'
+import CaptainHome from './pages/CaptainHome.jsx'
+import CaptainProtectWrapper from './pages/CaptainProtectWrapper.jsx'
+
 function App() {
   return (
     <div>
@@ -26,6 +29,9 @@ function App() {
           <UserProtectedWrapper>
             <UserLogout />
           </UserProtectedWrapper>
+        } />
+        <Route path='/captain-home' element={
+          <CaptainProtectWrapper><CaptainHome /></CaptainProtectWrapper>
         } />
         {/* Add more routes as needed */}
       </Routes>
