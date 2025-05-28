@@ -34,7 +34,7 @@ function UserSignup() {
       fullname: {
         firstname: formData.firstName
       }, 
-      lastName: formData.lastName,
+      lastname: formData.lastName,
       email: formData.email,
 
       phone: formData.phone,
