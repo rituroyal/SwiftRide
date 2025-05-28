@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { UserDataContext } from '../context/UserContext'
 
 function UserSignup() {
   const [formData, setFormData] = useState({
@@ -11,30 +13,46 @@ function UserSignup() {
     confirmPassword: ''
   })
 
+  const navigate = useNavigate()
+  const {user, setUser} = React.useContext(UserDataContext)
+
   const handleChange = (e) => {
+    
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     })
   }
 
-  const submitHandler = (e) => {
+  const submitHandler = async(e) => {
     e.preventDefault()
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match')
       return
     }
+    const newUser = {
+      fullname: {
+        firstname: formData.firstName
+      }, 
+      lastName: formData.lastName,
+      email: formData.email,
+
+      phone: formData.phone,
+      password: formData.password
+    }
+
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser)
+
+    if (response.status === 201) {
+      const data = response.data
+      setUser(data.user)
+      navigate('/home')
+    }
     // Handle form submission here
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: ''
-    })
-    console.log(formData)
+    
   }
+
+  
 
   return (
     <div className='px-14 h-screen flex flex-col justify-between mx-auto'>
@@ -117,7 +135,8 @@ function UserSignup() {
             type="submit"
             className='bg-[#111] text-white font-semibold mb-4 rounded px-2 py-2 w-full text-lg'
           >
-            Sign Up
+            
+            Create Account
           </button>
 
           <p className='text-center'>

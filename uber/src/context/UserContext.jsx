@@ -3,7 +3,7 @@ import React, { useState,createContext } from 'react'
 export const UserDataContext=createContext()
 //pure application ko wrap karna hai
 const UserContext = ({children}) => {
-    const [user, setuser] = useState({
+    const [user, setUser] = useState({
         email:'',
         fullName:{
             firstName:'',
@@ -11,10 +11,10 @@ const UserContext = ({children}) => {
         }
     })
   return (
-    <div>
+    
         
-      <UserDataContext.Provider value={[user,setuser]}>{children}</UserDataContext.Provider>
-    </div>
+      <UserDataContext.Provider value={{user, setUser}}>{children}</UserDataContext.Provider>
+    
   )
 }
 
