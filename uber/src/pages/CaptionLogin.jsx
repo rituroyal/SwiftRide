@@ -19,7 +19,7 @@ function CaptionLogin() {
   return (
     <div className='p-7 h-screen flex flex-col justify-between'>
         <div>
-            <h2 className='my-8 w-16 font-bold text-2xl font-mono'>-RideUrWay-</h2>
+        <h2 className='my-4  font-bold text-2xl font-mono'>-RideUrWay-</h2>
            
       <form onSubmit={(e)=>submitHandler(e)}>
         <h3 className='text-lg font-medium mb-2'>What's your email</h3>

@@ -25,13 +25,21 @@ function UserSignup() {
       return
     }
     // Handle form submission here
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: ''
+    })
     console.log(formData)
   }
 
   return (
-    <div className='px-7 h-screen flex flex-col justify-between'>
+    <div className='px-14 h-screen flex flex-col justify-between mx-auto'>
       <div className='mb-8'>
-        <h2 className='my-4  font-bold text-2xl font-mono'>-RideUrWay-</h2>
+        <h2 className='my-4  font-bold text-2xl font-mono'>RideUrWay</h2>
         
         <form onSubmit={submitHandler}  >
           <div className='flex gap-2'>
@@ -118,7 +126,7 @@ function UserSignup() {
         </form>
       </div>
       <div>
-        <NavLink to='/CaptainSignup' className='bg-[#d5622d] text-white flex justify-center items-centerfont-semibold mb-7 rounded px-2 py-2  w-full text-lg placeholder:text-base'>Sign in as Captain</NavLink>
+        <p className='text-[8px] text-zinc-600'>By proceeding, yu consent to get calls, WhatsApp or SMS message, including by automated means, from Uber and its affiliated to the number provided.</p>
       </div>
     </div>
   )
