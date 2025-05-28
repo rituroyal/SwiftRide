@@ -18,7 +18,7 @@ const CaptainProtectWrapper = ({
     }, [token, navigate]);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/captain`, {
+        axios.get(`${import.meta.env.VITE_API_URL}/captain/profile`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

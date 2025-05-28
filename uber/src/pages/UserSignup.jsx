@@ -50,6 +50,14 @@ function UserSignup() {
       navigate('/home')
     }
     // Handle form submission here
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+    })
     
   }
 
