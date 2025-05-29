@@ -17,7 +17,6 @@
   "scripts": {
     "start:frontend": "cd uber && npm run dev",
     "build:frontend": "cd uber && npm run build",
-
     "start:backend": "cd backend && npm run dev",
     "dev": "concurrently -n \"frontend,backend\" -c \"bgBlue,bgYellow\" \"npm run start:frontend\" \"npm run start:backend\""
   },
