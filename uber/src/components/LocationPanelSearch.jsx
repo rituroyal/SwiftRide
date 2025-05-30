@@ -1,8 +1,6 @@
-
 import React from 'react';
 
 function LocationPanelSearch(props) {
-  console.log('LocationPanelSearch props:', props);
   const locations = [
     '24B, Near Kapoor’s cafe, Sheryians Coding School, Bhopal',
     '14A, Opposite DB Mall, MP Nagar, Bhopal',
@@ -18,10 +16,19 @@ function LocationPanelSearch(props) {
         const subtitle = parts.slice(1).join(',');
 
         return (
-          <div onClick={() => {
-            props.setVehiclePanelOpen(true)
-            props.setPanelOpen(false)
-          }} key={index} className="flex items-start space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+          <div
+            onClick={() => {
+              if (props.activeInput === 'pickup') {
+                props.setPickupLocation(loc);
+              } else if (props.activeInput === 'dropoff') {
+                props.setDropoffLocation(loc);
+              }
+              
+              // Do NOT open vehicle panel here!
+            }}
+            key={index}
+            className="flex items-start space-x-2 cursor-pointer hover:bg-zinc-400 p-2 py-4 rounded-md"
+          >
             <i className="ri-map-pin-line text-lg mt-1 text-gray-700"></i>
             <div>
               <p className="text-sm font-medium text-gray-800">{title}</p>

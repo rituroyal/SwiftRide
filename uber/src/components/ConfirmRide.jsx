@@ -74,7 +74,7 @@ const ConfirmRide = forwardRef(
         )}
 
         {/* Back to Home Button */}
-        <div className="w-full flex justify-center mt-auto">
+        <div className="w-full mb-5 flex justify-center mt-auto">
           <button
             className="w-full max-w-md bg-black text-white py-3 rounded-md font-semibold text-lg"
             onClick={onBackToHome}

@@ -1,5 +1,3 @@
-
-
 import React, { forwardRef } from 'react';
 
 const vehicles = [
@@ -26,6 +24,7 @@ const vehicles = [
   },
 ];
 
+
 const VehiclePanel = forwardRef(
   (
     {
@@ -40,17 +39,17 @@ const VehiclePanel = forwardRef(
   ) => (
     <div
       ref={ref}
-      className="absolute bottom-0 w-full bg-white z-10 p-4"
-      style={{ transform: 'translateY(100%)', transition: 'transform 0.4s' }}
+      className="fixed bottom-0 left-0 right-0 w-full bg-white p-4 z-50"
+      style={{
+        transform: 'translateY(100%)',
+        transition: 'transform 0.4s',
+        maxHeight: 'none',
+        overflowY: 'visible',
+        paddingBottom: '5rem',
+      }}
     >
       {open && !confirmedRide && (
         <>
-          <h5
-            className="p-3 text-center absolute top-0 right-0 cursor-pointer"
-            onClick={() => setOpen(false)}
-          >
-            <i className="ri-arrow-down-wide-line"></i>
-          </h5>
           <h3 className="text-xl font-bold mb-4">Choose a Ride</h3>
           {vehicles.map((v, index) => (
             <div
@@ -77,15 +76,18 @@ const VehiclePanel = forwardRef(
               <h4 className="text-lg font-semibold">{v.price}</h4>
             </div>
           ))}
-          {/* Confirm Ride Button only if a vehicle is selected */}
-          {selectedVehicle !== null && (
+          {/* Center the Confirm Ride Button */}
+          <div className="flex justify-center mb-8">
             <button
-              className="mt-4 w-full bg-green-600 text-white py-2 rounded-md font-semibold"
+              className={`py-2 w-[90%] bg-green-600 text-white rounded-md font-semibold ${
+                selectedVehicle === null ? 'cursor-not-allowed opacity-50' : ''
+              }`}
               onClick={() => setConfirmedRide(true)}
+              disabled={selectedVehicle === null}
             >
               Confirm Ride
             </button>
-          )}
+          </div>
         </>
       )}
     </div>

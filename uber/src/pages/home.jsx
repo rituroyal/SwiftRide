@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -33,44 +32,30 @@ const vehicles = [
 function Home() {
   const panelRef = useRef(null);
   const panelCloseRef = useRef(null);
-  const [panelOpen, setPanelOpen] = useState(false);
-  const [pickupLocation, setPickupLocation] = useState('');
-  const [dropoffLocation, setDropoffLocation] = useState('');
+  const [panelOpen, setpanelOpen] = useState(false);
+  const [pickupLocation, setpickupLocation] = useState('');
+  const [dropoffLocation, setdropoffLocation] = useState('');
   const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false);
   const [confirmedRide, setConfirmedRide] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const vehiclePanelRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
+  const [activeInput, setActiveInput] = useState(null); // 'pickup' or 'dropoff'
 
   // Animate location panel
   useGSAP(() => {
-    if (!panelRef.current) return;
-    if (panelOpen) {
-      panelRef.current.style.display = 'block';
-      gsap.to(panelRef.current, {
-        height: '60%',
-        opacity: 1,
-        duration: 0.4,
-        ease: 'power2.inOut',
-      });
-    } else {
-      gsap.to(panelRef.current, {
-        height: '0%',
-        opacity: 0,
-        duration: 0.4,
-        ease: 'power2.inOut',
-        onComplete: () => {
-          if (panelRef.current) panelRef.current.style.display = 'none';
-        },
-      });
-    }
-    if (panelCloseRef.current) {
-      gsap.to(panelCloseRef.current, {
-        rotate: panelOpen ? 0 : 180,
-        duration: 0.3,
-        ease: 'power2.inOut',
-      });
-    }
+    gsap.to(panelRef.current, {
+      height: panelOpen ? "62%" : "0%",
+      duration: 0.5,
+      opacity: panelOpen ? 1 : 0,
+      display: panelOpen ? "block" : "hidden", 
+     
+    })
+    gsap.to(panelCloseRef.current, {
+      rotate: panelOpen ? 0 : 180,
+      duration: 0.2,
+
+    });
   }, [panelOpen]);
 
   // Animate vehicle panel
@@ -81,6 +66,7 @@ function Home() {
         transform: 'translateY(0)',
         duration: 0.4,
         ease: 'power2.inOut',
+         // Ensure it's visible
       });
     } else {
       gsap.to(vehiclePanelRef.current, {
@@ -110,98 +96,100 @@ function Home() {
   }, [confirmedRide]);
 
   // Form submit: open vehicle panel
-  const submitHandler = (e) => {
+  const sumbithandler = (e) => {
     e.preventDefault();
     if (!pickupLocation || !dropoffLocation) {
       alert('Please enter both pickup and dropoff locations.');
       return;
     }
+    if (pickupLocation === dropoffLocation) {
+      alert('Please enter different pickup and dropoff locations.');
+      return;
+    }
     setVehiclePanelOpen(true);
-    setPanelOpen(false);
+    setpanelOpen(false);
     setSelectedVehicle(null); // Reset selection on new search
     setConfirmedRide(false);  // Reset confirm on new search
   };
 
   // Reset all for Back to Home
   const handleBackToHome = () => {
+    
     setConfirmedRide(false);
     setVehiclePanelOpen(false);
+    setpanelOpen(false);
     setSelectedVehicle(null);
-    setPickupLocation('');
-    setDropoffLocation('');
+    setpickupLocation('');
+    setdropoffLocation('');
   };
 
   return (
-    <div className="relative w-full h-screen bg-gray-100 font-sans overflow-hidden">
+     <div className='h-screen relative overflow-hidden'>
       {/* Header */}
-      <header className="absolute top-4 left-4 text-xl font-bold z-10">RideUrWay</header>
+      <h2 className=' w-16 font-bold text-2xl absolute left-5 top-5 font-mono'>RideUrWay</h2>
 
       {/* Background Image */}
-      <img
-        src="https://t3.ftcdn.net/jpg/07/28/30/26/240_F_728302620_Xddnf5Cl0K1ACZurd6yByUzHiHMMIoe6.jpg"
-        alt="background"
-        className="w-full h-full object-cover absolute inset-0"
-      />
+      <div className='h-screen w-screen' >
+        <img src="https://t3.ftcdn.net/jpg/07/28/30/26/240_F_728302620_Xddnf5Cl0K1ACZurd6yByUzHiHMMIoe6.jpg" alt="RideUrWay" className="w-full h-full object-cover" />
+      </div>
 
       {/* Find a Trip Panel */}
       {!vehiclePanelOpen && !confirmedRide && (
-        <div className="absolute bottom-40 w-full bg-white px-4 py-6 shadow-lg rounded-t-2xl z-20">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-lg font-semibold">Find a Trip</h3>
-            <button
-              ref={panelCloseRef}
-              onClick={() => setPanelOpen(!panelOpen)}
-              className="text-xl transform transition-transform"
-            >
-              <i className="ri-arrow-down-wide-line"></i>
-            </button>
-          </div>
-          <form onSubmit={submitHandler}>
-            <input
-              type="text"
-              placeholder="Enter pickup location"
-              value={pickupLocation}
-              onChange={(e) => setPickupLocation(e.target.value)}
-              onClick={() => setPanelOpen(true)}
-              className="w-full px-4 py-2 rounded-md bg-gray-100 mb-3"
-            />
-            <input
-              type="text"
-              placeholder="Enter dropoff location"
-              value={dropoffLocation}
-              onChange={(e) => setDropoffLocation(e.target.value)}
-              onClick={() => setPanelOpen(true)}
-              className="w-full px-4 py-2 rounded-md bg-gray-100"
-            />
+         <div className='absolute h-screen top-0 flex flex-col justify-end w-full '>
+        <div className='h-[38%] p-6 bg-white relative'>
+          <h5 ref={panelCloseRef} onClick={() => setpanelOpen(!panelOpen)} className='absolute right-6 top-6 text-2xl '><i className='ri-arrow-down-wide-line'></i></h5>
+          <h4 className='text-2xl font-semibold'>Find a Trip</h4>
+            
+          
+          <form onSubmit={(e) => sumbithandler(e)} className='mt-2'>
+          <input 
+            className="bg-[#eee] px-12 py-2 text-base rounded-lg w-full mt-5" 
+            type="text"
+            onClick={() => { setpanelOpen(true); setActiveInput('pickup'); }} 
+            value={pickupLocation} 
+            onChange={(e) => setpickupLocation(e.target.value)} 
+            placeholder="Enter pickup location" />
+
+          <input 
+            className="bg-[#eee] px-12 py-2 text-base rounded-lg mt-3 w-full" 
+            type="text" 
+            onClick={() => { setpanelOpen(true); setActiveInput('dropoff'); }}
+            value={dropoffLocation} 
+            onChange={(e) => setdropoffLocation(e.target.value)} 
+            placeholder="Enter dropoff location" />
+              
             <button
               type="submit"
-              className="mt-4 w-full bg-black text-white py-2 rounded-md font-semibold"
+              className="bg-green-600 text-white px-4 py-2 rounded-lg mt-4 w-full font-semibold"
             >
-              Search Rides
+              Find a Ride
             </button>
           </form>
-        </div>
-      )}
+
+      </div>
+
 
       {/* Animated Location Panel */}
       <div
         ref={panelRef}
-        className="absolute bottom-[200px] w-full bg-white z-30 px-4 py-3 rounded-t-2xl shadow-lg overflow-hidden"
-        style={{ display: 'none', height: '0%', opacity: 0 }}
+        className=" bg-white overflow-hidden"
       >
-        <div className="flex justify-between items-center mb-3">
-          <p className="text-gray-800 font-medium">Suggestions</p>
-          <button onClick={() => setPanelOpen(false)}>
-            <i
-              ref={panelCloseRef}
-              className="ri-arrow-down-s-line text-2xl text-gray-700"
-            ></i>
-          </button>
-        </div>
-        <LocationPanelSearch setPanelOpen={setPanelOpen} setVehiclePanelOpen={setVehiclePanelOpen} />
+        <LocationPanelSearch
+          setPanelOpen={setpanelOpen}
+          setVehiclePanelOpen={setVehiclePanelOpen}
+          pickupLocation={pickupLocation}
+          dropoffLocation={dropoffLocation}
+          setPickupLocation={setpickupLocation}
+          setDropoffLocation={setdropoffLocation}
+          activeInput={activeInput}
+        />
+      </div>
       </div>
 
-      {/* Vehicle Panel (always in DOM for GSAP) */}
+       )} 
+      
+
+      
       <VehiclePanel
         ref={vehiclePanelRef}
         open={vehiclePanelOpen}
@@ -213,15 +201,14 @@ function Home() {
         vehicles={vehicles}
       />
 
-      {/* Confirm Ride Panel (always in DOM for GSAP) */}
-      <ConfirmRide
+     <ConfirmRide
         ref={confirmRidePanelRef}
         open={confirmedRide}
         selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
         pickupLocation={pickupLocation}
         dropoffLocation={dropoffLocation}
         onBackToHome={handleBackToHome}
-      />
+      /> 
     </div>
   );
 }
