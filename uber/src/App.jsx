@@ -10,13 +10,15 @@ import UserProtectedWrapper from './pages/UserProtectedWrapper.jsx'
 import UserLogout from './pages/UserLogout.jsx'
 import CaptainHome from './pages/CaptainHome.jsx'
 import CaptainProtectWrapper from './pages/CaptainProtectWrapper.jsx'
+import Riding from './pages/Riding.jsx'
 
 function App() {
   return (
     <div>
       <Routes>
         <Route path='/' element={<Start/>} />
-        <Route path='/login' element={<UserLogin/>} />
+        <Route path='/login' element={<UserLogin />} />
+        <Route path='/riding' element={<Riding />} />
         <Route path='/signup' element={<UserSignup/>} />
         <Route path='/CaptainLogin' element={<CaptionLogin/>} />
         <Route path='/CaptainSignup' element={<CaptainSignup />} />

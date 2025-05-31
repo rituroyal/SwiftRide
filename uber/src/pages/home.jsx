@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { use, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import LocationPanelSearch from '../components/LocationPanelSearch';
 import VehiclePanel from '../components/VehiclePanel';
 import ConfirmRide from '../components/ConfirmRide';
+import LookingForDriver from '../components/LookingForDriver';
+// import WaitingForDriver from '../components/WaitingForDriver';
 
 const vehicles = [
   {
@@ -41,7 +43,8 @@ function Home() {
   const vehiclePanelRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
   const [activeInput, setActiveInput] = useState(null); // 'pickup' or 'dropoff'
-
+  const [lookingForDriver, setLookingForDriver] = useState(false);
+  
   // Animate location panel
   useGSAP(() => {
     gsap.to(panelRef.current, {
@@ -95,6 +98,9 @@ function Home() {
     }
   }, [confirmedRide]);
 
+  
+
+
   // Form submit: open vehicle panel
   const sumbithandler = (e) => {
     e.preventDefault();
@@ -122,6 +128,14 @@ function Home() {
     setpickupLocation('');
     setdropoffLocation('');
   };
+
+  // ...existing code...
+
+const handleConfirmRide = () => {
+  setLookingForDriver(true);
+  setVehiclePanelOpen(false);
+  setConfirmedRide(false);
+};
 
   return (
      <div className='h-screen relative overflow-hidden'>
@@ -194,21 +208,31 @@ function Home() {
         ref={vehiclePanelRef}
         open={vehiclePanelOpen}
         setOpen={setVehiclePanelOpen}
-        setConfirmedRide={setConfirmedRide}
+        // setConfirmedRide={setConfirmedRide}
+        setConfirmedRide={handleConfirmRide} 
         confirmedRide={confirmedRide}
         selectedVehicle={selectedVehicle}
         setSelectedVehicle={setSelectedVehicle}
         vehicles={vehicles}
       />
 
-     <ConfirmRide
+{lookingForDriver && (
+      <LookingForDriver
+        selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
+        pickupLocation={pickupLocation}
+        dropoffLocation={dropoffLocation}
+        onBackToHome={handleBackToHome}
+      />
+    )}
+
+     {/* <ConfirmRide
         ref={confirmRidePanelRef}
         open={confirmedRide}
         selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
         pickupLocation={pickupLocation}
         dropoffLocation={dropoffLocation}
         onBackToHome={handleBackToHome}
-      /> 
+      />  */}
     </div>
   );
 }
