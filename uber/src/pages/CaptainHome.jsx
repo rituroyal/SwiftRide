@@ -1,14 +1,30 @@
 
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import CaptainDetails from '../components/CaptainDetails';
 import RidePopUp from '../components/RidePopUp';
+import ConfirmRidePopUp from '../components/ConfirmRidePopUp';
 
 const CaptainHome = () => {
+  const [showRidePopUp, setShowRidePopUp] = useState(true);
+  const [showConfirmRide, setShowConfirmRide] = useState(false);
+
+  // Sample data (props pass karne ke liye)
+  const rideData = {
+    userImg: "/image/male.jpg",
+    userName: "Amit Sharma",
+    distance: "2.4 km",
+    pickupLocation: "562/11-A, Kaikondrahalli, Bengaluru, Karnataka",
+    dropoffLocation: "24B, Near Kapoor’s cafe, Sheryians Coding School, Bhopal",
+    vehicleType: "Suzuki S-Presso LXI",
+    vehicleNumber: "KA15AK00-0",
+    fare: "₹193.20",
+    eta: "6 min"
+  };
+
   return (
     <div className="h-screen w-full flex flex-col">
-
       {/* Logout Button - Top Right */}
       <Link
         to="/home"
@@ -30,10 +46,27 @@ const CaptainHome = () => {
       </div>
 
       <div className="h-[50vh] w-full bg-white flex flex-col justify-center items-center">
-  <CaptainDetails />
-</div>
-      <div className='flex-1 w-full bg-white z-30 p-6 flex flex-col items-center rounded-t-2xl shadow-lg'>
-        <RidePopUp />
+        {showRidePopUp ? (
+          <RidePopUp
+            {...rideData}
+            onConfirm={() => {
+              setShowConfirmRide(true);
+              setShowRidePopUp(false);
+            }}
+            onIgnore={() => setShowRidePopUp(false)}
+          />
+        ) : showConfirmRide ? (
+          <ConfirmRidePopUp
+            {...rideData}
+            onConfirmRide={() => {
+              setShowConfirmRide(false);
+              
+            }}
+            onCancelRide={() => setShowConfirmRide(false)}
+          />
+        ) : (
+          <CaptainDetails />
+        )}
       </div>
     </div>
   );
