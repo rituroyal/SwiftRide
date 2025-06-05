@@ -16,3 +16,17 @@ module.exports.getCoordinate = async (req, res) => {
         res.status(404).json({ error: "Coordinate not Found" });
     }
 };
+
+module.exports.getDistanceTime = async (req, res) => {
+    const { origin, destination } = req.query;
+    // origin = "Bhopal", destination = "Indore" → pehle coordinate lo
+    try {
+        const originCoord = await mapsService.getAddressCoordinate(origin);
+        const destCoord = await mapsService.getAddressCoordinate(destination);
+        const result = await mapsService.getDistanceAndTime(originCoord, destCoord);
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
