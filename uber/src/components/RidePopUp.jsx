@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const RidePopUp = (props) => {
   return (
@@ -40,4 +40,5 @@ const RidePopUp = (props) => {
   )
 }
 
-export default RidePopUp
+
+export default RidePopUp;
