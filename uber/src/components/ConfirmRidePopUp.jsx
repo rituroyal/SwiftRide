@@ -1,12 +1,20 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
-const RidePopUp = (props) => {
+
+function ConfirmRidePopUp(props) {
+    const [otp, setotp] = useState("")
+
+    const submitHandler = (e) => {
+      e.preventDefault();
+      // Handle OTP submission logic here
+
+    };
   return (
-    
-        <div className="w-full h-full  py-4 max-w-md border border-gray-300 rounded-xl bg-gray-50 flex flex-col justify-center items-center ">
+    <div className="w-full h-screen overflow-hidden justify-center  border border-gray-300 rounded-xl bg-gray-50 flex flex-col  items-center ">
           <div className='w-full px-4 py-2 relative flex justify-between items-center'>
             <h5 onClick={() => props.setRidePopPanel(false)} className='absolute right-6 top-[-2] text-2xl '><i className='ri-arrow-down-wide-line'></i></h5>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Ride Details</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Confirm This Ride To Start</h2>
           </div>
 
             <div className='flex items-center gap-3 '>
@@ -23,21 +31,19 @@ const RidePopUp = (props) => {
             <p className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'> ₹150</p></p>
             </div>
             <div className='flex flex-col w-full px-4 '>
-              <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3"
-              onClick={() => {
-                props.setRidePopPanel(false);
-                props.setConfirmRidePopPanel(true);
-              }}>
-            Accept
+              <form onSubmit={(e)=>{submitHandler(e)}} >
+                <input type="text" value={otp} onChange={(e)=>{setotp(e.target.value)}} placeholder='Enter OTP' className='w-full px-4 py-2 border border-gray-300 rounded-lg mb-3' required />
+                <Link to='/captain-riding' className="bg-green-500 flex items-center justify-center text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3">
+            Confirm Ride
+            
+            </Link>
+            <button onClick={() => {props.setRidePopPanel(false); props.setConfirmRidePopPanel(false);}} className="bg-zinc-400 text-white px-4 py-2 rounded-lg hover:bg-zinc-500 transition duration-200 my-3">
+            Cancel Ride
             </button>
-            <button onClick={() => props.setRidePopPanel(false)} className="bg-zinc-400 text-white px-4 py-2 rounded-lg hover:bg-zinc-500 transition duration-200 my-3">
-            Ignore
-            </button>
+              </form>
             </div>
         </div>
-          
-   
   )
 }
 
-export default RidePopUp
+export default ConfirmRidePopUp

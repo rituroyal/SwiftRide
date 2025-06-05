@@ -1,12 +1,12 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
-const RidePopUp = (props) => {
+function FinishRide(props) {
   return (
-    
-        <div className="w-full h-full  py-4 max-w-md border border-gray-300 rounded-xl bg-gray-50 flex flex-col justify-center items-center ">
+     <div className="w-full h-screen overflow-hidden justify-center  border border-gray-300 rounded-xl bg-gray-50 flex flex-col  items-center ">
           <div className='w-full px-4 py-2 relative flex justify-between items-center'>
-            <h5 onClick={() => props.setRidePopPanel(false)} className='absolute right-6 top-[-2] text-2xl '><i className='ri-arrow-down-wide-line'></i></h5>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Ride Details</h2>
+            <h5 onClick={() => props.setFinishRide(false)} className='absolute right-6 top-[-2] text-2xl '><i className='ri-arrow-down-wide-line'></i></h5>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Finish This Ride </h2>
           </div>
 
             <div className='flex items-center gap-3 '>
@@ -23,21 +23,16 @@ const RidePopUp = (props) => {
             <p className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'> ₹150</p></p>
             </div>
             <div className='flex flex-col w-full px-4 '>
-              <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3"
-              onClick={() => {
-                props.setRidePopPanel(false);
-                props.setConfirmRidePopPanel(true);
-              }}>
-            Accept
-            </button>
-            <button onClick={() => props.setRidePopPanel(false)} className="bg-zinc-400 text-white px-4 py-2 rounded-lg hover:bg-zinc-500 transition duration-200 my-3">
-            Ignore
-            </button>
+              
+                <Link to='/home' className="bg-green-500 flex items-center justify-center text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3">
+            Finish Ride
+            
+            </Link>
+            
+              
             </div>
         </div>
-          
-   
   )
 }
 
-export default RidePopUp
+export default FinishRide

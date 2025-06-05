@@ -1,13 +1,51 @@
 
 
-import React from 'react';
+import React ,{useState} from 'react';
 import { Link } from 'react-router-dom';
 import CaptainDetails from '../components/CaptainDetails';
 import RidePopUp from '../components/RidePopUp';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import ConfirmRidePopUp from '../components/ConfirmRidePopUp';
 
 const CaptainHome = () => {
+  const [ridePopPanel, setRidePopPanel] = useState(true);
+  const [confirmRidePopPanel, setConfirmRidePopPanel] = useState(false);
+  const ridePopPanelRef = React.useRef(null);
+  const confirmRidePopPanelRef = React.useRef(null);
+
+  useGSAP(() => {
+    // GSAP animations can be added here if needed
+    if(ridePopPanel){
+      gsap.to(ridePopPanelRef.current, {
+        transform: 'translateY(0)',
+        
+      }); 
+
+  }else {
+      gsap.to(ridePopPanelRef.current, {
+        transform: 'translateY(100%)',
+        
+      });
+    }
+  },[ridePopPanel]);
+
+  useGSAP(() => {
+    // GSAP animations for confirm ride panel
+    if(confirmRidePopPanel){
+      gsap.to(confirmRidePopPanelRef.current, {
+        transform: 'translateY(0)',
+       
+      });
+    } else {
+      gsap.to(confirmRidePopPanelRef.current, {
+        transform: 'translateY(100%)',
+        
+      });
+    }
+  }, [confirmRidePopPanel]);
   return (
-    <div className="h-screen w-full flex flex-col">
+    <div className="h-screen w-full relative overflow-hidden flex flex-col">
 
       {/* Logout Button - Top Right */}
       <Link
@@ -29,11 +67,14 @@ const CaptainHome = () => {
         </div>
       </div>
 
-      <div className="h-[50vh] w-full bg-white flex flex-col justify-center items-center">
-  <CaptainDetails />
-</div>
-      <div className='flex-1 w-full bg-white z-30 p-6 flex flex-col items-center rounded-t-2xl shadow-lg'>
-        <RidePopUp />
+      <div className="h-[50vh] w-screen bg-white flex flex-col justify-center my-7 items-center">
+        <CaptainDetails />
+      </div>
+      <div ref={ridePopPanelRef} className='flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30  flex flex-col items-center rounded-t-2xl shadow-lg'>
+        <RidePopUp setRidePopPanel={setRidePopPanel} setConfirmRidePopPanel={setConfirmRidePopPanel} />
+      </div>
+      <div ref={confirmRidePopPanelRef} className='flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30  flex flex-col items-center rounded-t-2xl shadow-lg'>
+        <ConfirmRidePopUp setConfirmRidePopPanel={setConfirmRidePopPanel} setRidePopPanel={setRidePopPanel} />
       </div>
     </div>
   );
