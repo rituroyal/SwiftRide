@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router(); 
 const {isAuth} = require('../middleware/auth.middleware');  
-const { getCoordinate, getDistanceTime } = require('../controller/maps.controller'); 
+const { getCoordinate, getDistanceTime, getSuggestions } = require('../controller/maps.controller'); 
 const {query} = require('express-validator');
 
 router.get('/get-coordinate',
@@ -21,5 +21,15 @@ router.get('/get-coordinate',
             .isLength({ min: 3 }),
         isAuth,
         getDistanceTime 
-    );
+);
+    
+router.get('/get-suggestions',
+    query('input')
+        .notEmpty()
+        .withMessage('Input is required')
+        .isString()
+        .withMessage('Input must be a string'),
+    isAuth,  
+    getSuggestions
+);
 module.exports = router;

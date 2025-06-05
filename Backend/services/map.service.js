@@ -3,6 +3,24 @@ const { default: axios } = require("axios");
 
 require('dotenv').config();
 
+function buildTerms(description) {
+  const terms = [];
+  let offset = 0;
+
+  const parts = description.split(', '); // comma + space se split
+
+  parts.forEach(part => {
+    terms.push({
+      offset,
+      value: part
+    });
+    offset += part.length + 2; // +2 for ", "
+  });
+
+  return terms;
+}
+
+
 module.exports.getDistanceAndTime = async (originCoord, destCoord) => {
   const apiKey = process.env.ORS_API_KEY;
 
@@ -68,3 +86,53 @@ module.exports.getAddressCoordinate=async(address)=>{
     throw new Error('Unable to fetch coordinates');
   }
 }
+
+
+
+
+module.exports.getSuggestions = async (input) => {
+  try {
+      const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+          params: {
+              q: input,
+              format: 'json',
+              addressdetails: 1,
+              limit: 10,
+              countrycodes: 'in',
+              polygon_geojson: 0
+          },
+          headers: {
+              'User-Agent': 'vishakameena244@gmail.com'
+          }
+      });
+
+      const allowedTypes = new Set([
+          'city', 'town', 'village', 'suburb', 'residential',
+          'commercial', 'road', 'neighbourhood', 'locality',
+          'hamlet', 'poi'
+      ]);
+
+      const filteredSuggestions = response.data.filter(place =>
+          allowedTypes.has(place.type)
+      );
+
+      const suggestions = filteredSuggestions.map(place => {
+          const description = place.display_name;
+          return {
+              display_name: description,
+              lat: place.lat,
+              lng: place.lon,
+              type: place.type,
+              class: place.class,
+              address: place.address,
+              terms: buildTerms(description)
+          };
+      });
+
+      return suggestions;
+
+  } catch (err) {
+      console.error('Error in getSuggestions:', err.message);
+      throw new Error('Unable to fetch suggestions');
+  }
+};

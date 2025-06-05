@@ -30,3 +30,20 @@ module.exports.getDistanceTime = async (req, res) => {
     }
 };
 
+module.exports.getSuggestions = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { input } = req.query;
+
+    try {
+        const suggestions = await mapsService.getSuggestions(input);
+        res.status(200).json(suggestions);
+    } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        res.status(500).json({ error: "Unable to fetch suggestions" });
+    }
+};
+
