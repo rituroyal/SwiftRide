@@ -20,7 +20,11 @@ module.exports.isAuth=async(req,res,next)=>{
     try{
         //utna hi data milega jitna dala tha matlab sirf id
         const decoded=jwt.verify(token,process.env.JWT_SECRET_KEY);
-        req.user=await User.findById(decoded._id);
+        req.user = await User.findById(decoded._id);
+        
+        if (!req.user) {
+            return res.status(401).json({ error: 'User not found' });
+        }
         
         next();
     }
@@ -52,3 +56,5 @@ module.exports.isCaptainAuth = async (req, res, next) => {
     }
     next();
 }
+
+
