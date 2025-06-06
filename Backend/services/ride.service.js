@@ -2,6 +2,12 @@
 const rideModel = require('../models/ride.model');
 const { getAddressCoordinate, getDistanceAndTime } = require('./map.service');
 
+const crypto = require("crypto");
+
+function generateOtp(num = 4) {
+    const otp = crypto.randomInt(0, 10 ** num).toString().padStart(num, '0');
+    return otp;
+}
 module.exports.createRide = async ({ user, pickup, destination, vehicleType }) => {
     if (!user || !pickup || !destination || !vehicleType) {
         throw new Error("Pickup, destination, and vehicle type are required");
@@ -34,7 +40,8 @@ console.log("Destination coordinates:", destCoord);
         fare: fare,
         distance: distanceTime.distance,
         duration: distanceTime.duration,
-        status: 'pending'
+        status: 'pending',
+        otp: generateOtp(6), // Generate OTP
     });
     await ride.save();
     return ride;
@@ -62,3 +69,6 @@ function calculateFare(distance, duration, type) {
     return parseFloat(fare.toFixed(2));
 
 }
+
+
+
