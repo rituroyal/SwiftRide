@@ -1,30 +1,28 @@
+
 import React from 'react';
 
 function LocationPanelSearch(props) {
-  const locations = [
-    '24B, Near Kapoor’s cafe, Sheryians Coding School, Bhopal',
-    '14A, Opposite DB Mall, MP Nagar, Bhopal',
-    '63C, Near RRL Ground, Habibganj Station, Bhopal',
-    '88D, Beside AIIMS Hospital, Saket Nagar, Bhopal',
-  ];
+  // Use suggestions prop instead of hardcoded locations
+  const { suggestions, onSelectSuggestion, activeInput, setPickupLocation, setDropoffLocation } = props;
 
   return (
     <div className="space-y-3">
-      {locations.map((loc, index) => {
-        const parts = loc.split(',');
+      {/* Map over suggestions instead of hardcoded locations */}
+      {suggestions.map((suggestion, index) => {
+        // Assuming suggestions are simple strings for now.
+        // If suggestions are objects with title/subtitle, adjust parsing here.
+        const parts = suggestion.display_name.split(',');
         const title = parts[0];
         const subtitle = parts.slice(1).join(',');
+
 
         return (
           <div
             onClick={() => {
-              if (props.activeInput === 'pickup') {
-                props.setPickupLocation(loc);
-              } else if (props.activeInput === 'dropoff') {
-                props.setDropoffLocation(loc);
-              }
-              
-              // Do NOT open vehicle panel here!
+              // Call the onSelectSuggestion prop with the selected suggestion
+              onSelectSuggestion(suggestion.display_name);
+
+            
             }}
             key={index}
             className="flex items-start space-x-2 cursor-pointer hover:bg-zinc-400 p-2 py-4 rounded-md"
@@ -37,6 +35,13 @@ function LocationPanelSearch(props) {
           </div>
         );
       })}
+
+      {/* Display a message if no suggestions are available */}
+      {suggestions.length === 0 && activeInput && (
+        <div className="p-4 text-center text-gray-500">
+          Start typing to see suggestions.
+        </div>
+      )}
     </div>
   );
 }

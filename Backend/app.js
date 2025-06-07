@@ -9,9 +9,14 @@ const captainRoutes = require('./routes/captain.routes');
 const mapsRoutes = require('./routes/maps.routes');
 const rideRoutes = require('./routes/ride.routes');
 
+
 dotenv.config();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',  
+    credentials: true                // allow cookies / headers
+  }));
+  
 connectDB();
 app.use(cookieParser())
 

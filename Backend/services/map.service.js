@@ -93,51 +93,31 @@ module.exports.getAddressCoordinate=async(address)=>{
 }
 
 
-
-
 module.exports.getSuggestions = async (input) => {
   try {
-      const response = await axios.get('https://nominatim.openstreetmap.org/search', {
-          params: {
-              q: input,
-              format: 'json',
-              addressdetails: 1,
-              limit: 10,
-              countrycodes: 'in',
-              polygon_geojson: 0
-          },
-          headers: {
-              'User-Agent': 'vishakameena244@gmail.com'
-          }
-      });
+    const response = await axios.get('https://api.openrouteservice.org/geocode/autocomplete', {
+      params: {
+        text: input,
+        api_key: process.env.ORS_API_KEY,
+      },
+    });
 
-      const allowedTypes = new Set([
-          'city', 'town', 'village', 'suburb', 'residential',
-          'commercial', 'road', 'neighbourhood', 'locality',
-          'hamlet', 'poi'
-      ]);
+    const suggestions = response.data.features.map(feature => {
+      const description = feature.properties.label;
+      return {
+        display_name: description,
+        lat: feature.geometry.coordinates[1],
+        lng: feature.geometry.coordinates[0],
+        address: feature.properties.label,
+        terms: buildTerms(description)
+      };
+    });
 
-      const filteredSuggestions = response.data.filter(place =>
-          allowedTypes.has(place.type)
-      );
-
-      const suggestions = filteredSuggestions.map(place => {
-          const description = place.display_name;
-          return {
-              display_name: description,
-              lat: place.lat,
-              lng: place.lon,
-              type: place.type,
-              class: place.class,
-              address: place.address,
-              terms: buildTerms(description)
-          };
-      });
-
-      return suggestions;
+    return suggestions;
 
   } catch (err) {
-      console.error('Error in getSuggestions:', err.message);
-      throw new Error('Unable to fetch suggestions');
+    console.error('ORS Error in getSuggestions:', err.message);
+    throw new Error('Unable to fetch suggestions');
   }
 };
+

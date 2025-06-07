@@ -5,6 +5,7 @@ import LocationPanelSearch from '../components/LocationPanelSearch';
 import VehiclePanel from '../components/VehiclePanel';
 import ConfirmRide from '../components/ConfirmRide';
 import LookingForDriver from '../components/LookingForDriver';
+import axios from 'axios';
 // import WaitingForDriver from '../components/WaitingForDriver';
 
 const vehicles = [
@@ -44,6 +45,7 @@ function Home() {
   const confirmRidePanelRef = useRef(null);
   const [activeInput, setActiveInput] = useState(null); // 'pickup' or 'dropoff'
   const [lookingForDriver, setLookingForDriver] = useState(false);
+  const [suggestions, setSuggestions] = useState([]); // State for suggestions
   
   // Animate location panel
   useGSAP(() => {
@@ -98,7 +100,60 @@ function Home() {
     }
   }, [confirmedRide]);
 
-  
+
+
+  // Function to fetch suggestions
+  const fetchSuggestions = async (input, type) => {
+    if (input.length < 2) { // Only fetch if input is at least 2 characters
+      setSuggestions([]);
+      return;
+    }
+    try {
+       const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODQyNTgwYTI5NmFiYmE4ODQ0MDI0ZDMiLCJpYXQiOjE3NDkyODcyMzYsImV4cCI6MTc0OTM3MzYzNn0.ujEc66Pw4WF2rpSc_FikuKo0egfBVTDLofyVqcVv66M'; // Replace with your actual token
+     
+      const response = await axios.get('http://localhost:4000/maps/get-suggestions', {
+        params: {
+          input: input  // Replace `userInput` with your actual input variable
+        },
+        headers: {
+          Authorization:`Bearer ${token}`  // Use token from localStorage
+        },
+        
+      });
+      
+      setSuggestions(response.data);
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+      setSuggestions([]); // Clear suggestions on error
+    }
+  };
+
+  // Handle input change for pickup location
+  const handlePickupChange = (e) => {
+    const value = e.target.value;
+    setpickupLocation(value);
+    fetchSuggestions(value, 'pickup');
+  };
+
+  // Handle input change for dropoff location
+  const handleDropoffChange = (e) => {
+    const value = e.target.value;
+    setdropoffLocation(value);
+    fetchSuggestions(value, 'dropoff');
+  };
+
+  // Handle suggestion selection
+  const handleSelectSuggestion = (suggestion) => {
+    if (activeInput === 'pickup') {
+      setpickupLocation(suggestion);
+    } else if (activeInput === 'dropoff') {
+      setdropoffLocation(suggestion);
+    }
+    setSuggestions([]); // Clear suggestions after selection
+    setpanelOpen(false); // Close the suggestion panel
+  };
+
+
 
 
   // Form submit: open vehicle panel
@@ -127,6 +182,7 @@ function Home() {
     setSelectedVehicle(null);
     setpickupLocation('');
     setdropoffLocation('');
+    setSuggestions([]);
   };
 
   // ...existing code...
@@ -161,7 +217,8 @@ const handleConfirmRide = () => {
             type="text"
             onClick={() => { setpanelOpen(true); setActiveInput('pickup'); }} 
             value={pickupLocation} 
-            onChange={(e) => setpickupLocation(e.target.value)} 
+                // onChange={(e) => setpickupLocation(e.target.value)} 
+                onChange={handlePickupChange}  
             placeholder="Enter pickup location" />
 
           <input 
@@ -169,7 +226,8 @@ const handleConfirmRide = () => {
             type="text" 
             onClick={() => { setpanelOpen(true); setActiveInput('dropoff'); }}
             value={dropoffLocation} 
-            onChange={(e) => setdropoffLocation(e.target.value)} 
+                // onChange={(e) => setdropoffLocation(e.target.value)} 
+                onChange={handleDropoffChange}  
             placeholder="Enter dropoff location" />
               
             <button
@@ -195,7 +253,9 @@ const handleConfirmRide = () => {
           dropoffLocation={dropoffLocation}
           setPickupLocation={setpickupLocation}
           setDropoffLocation={setdropoffLocation}
-          activeInput={activeInput}
+              activeInput={activeInput}
+              suggestions={suggestions} // Pass suggestions
+          onSelectSuggestion={handleSelectSuggestion} // Pass selection handler
         />
       </div>
       </div>
