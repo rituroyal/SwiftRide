@@ -109,8 +109,14 @@ function Home() {
       return;
     }
     try {
-       const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODQyNTgwYTI5NmFiYmE4ODQ0MDI0ZDMiLCJpYXQiOjE3NDkyODcyMzYsImV4cCI6MTc0OTM3MzYzNn0.ujEc66Pw4WF2rpSc_FikuKo0egfBVTDLofyVqcVv66M'; // Replace with your actual token
+      
      
+      const token = localStorage.getItem('token');  // Get token from localStorage
+    if (!token) {
+      console.error('No auth token found');
+      setSuggestions([]);
+      return;
+    }
       const response = await axios.get('http://localhost:4000/maps/get-suggestions', {
         params: {
           input: input  // Replace `userInput` with your actual input variable
@@ -226,10 +232,16 @@ function Home() {
   // ...existing code...
 
 const handleConfirmRide = () => {
-  setLookingForDriver(true);
+  // setLookingForDriver(true);
   setVehiclePanelOpen(false);
-  setConfirmedRide(false);
-};
+  setConfirmedRide(true);
+  };
+  
+  const handleFinalConfirmRide = () => {
+    setLookingForDriver(true);
+    setConfirmedRide(false);
+  };
+  
 
   return (
      <div className='h-screen relative overflow-hidden'>
@@ -326,14 +338,17 @@ const handleConfirmRide = () => {
       />
     )}
 
-     {/* <ConfirmRide
-        ref={confirmRidePanelRef}
-        open={confirmedRide}
-        selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
-        pickupLocation={pickupLocation}
-        dropoffLocation={dropoffLocation}
-        onBackToHome={handleBackToHome}
-      />  */}
+<ConfirmRide
+  ref={confirmRidePanelRef}
+  open={confirmedRide}
+  selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
+  pickupLocation={pickupLocation}
+  dropoffLocation={dropoffLocation}
+  onBackToHome={handleBackToHome}
+  onConfirm={handleFinalConfirmRide}
+  fare={fare}
+/>
+
     </div>
   );
 }

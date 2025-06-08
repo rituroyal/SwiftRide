@@ -1,9 +1,10 @@
 
+
 import React, { forwardRef } from 'react';
 
 const ConfirmRide = forwardRef(
   (
-    { open, selectedVehicle, pickupLocation, dropoffLocation, onBackToHome },
+    { open, selectedVehicle, pickupLocation, dropoffLocation, onBackToHome, onConfirm, fare },
     ref
   ) => {
     if (!open)
@@ -15,20 +16,19 @@ const ConfirmRide = forwardRef(
         />
       );
 
+    const dynamicPrice =
+      selectedVehicle && fare[selectedVehicle.type]
+        ? `Rs ${fare[selectedVehicle.type].fare}`
+        : selectedVehicle?.price || 'Rs0';
+
     return (
       <div
         ref={ref}
         className="absolute bottom-0 left-0 w-full bg-white z-30 p-6 flex flex-col items-center justify-between min-h-[60vh] rounded-t-2xl shadow-lg"
         style={{ transform: 'translateY(0)', transition: 'transform 0.4s' }}
       >
-        {/* Success Tick */}
-        <div className="bg-green-100 rounded-full p-4 mb-4">
-          <i className="ri-check-line text-4xl text-green-600"></i>
-        </div>
-        <h3 className="text-2xl font-bold mb-2 text-center">Ride Confirmed!</h3>
-        <p className="text-gray-700 mb-6 text-center">
-          Your driver is on the way. Thank you for booking with RideUrWay.
-        </p>
+        {/* Title like Uber */}
+        <h3 className="text-2xl font-bold mb-4 text-center">Confirm your ride</h3>
 
         {/* Ride Details */}
         {selectedVehicle && (
@@ -49,7 +49,7 @@ const ConfirmRide = forwardRef(
               </div>
               <div className="ml-auto font-bold text-lg flex items-center">
                 <i className="ri-currency-line mr-1"></i>
-                {selectedVehicle.price}
+                {dynamicPrice}
               </div>
             </div>
             <div className="mt-2 flex items-center">
@@ -69,15 +69,22 @@ const ConfirmRide = forwardRef(
           </div>
         )}
 
-        {/* Back to Home Button */}
+        {/* Confirm + Back Button */}
         <div className="w-full mb-5 flex justify-center mt-auto">
-          <button
-            className="w-full max-w-md bg-black text-white py-3 rounded-md font-semibold text-lg"
-            onClick={onBackToHome}
-            style={{ marginBottom: 0 }}
-          >
-            Back to Ride Ur Way
-          </button>
+          <div className="w-full max-w-md flex flex-col gap-3">
+            <button
+              className="bg-green-600 text-white py-3 rounded-md font-semibold text-lg"
+              onClick={onConfirm}
+            >
+              Confirm Ride
+            </button>
+            <button
+              className="bg-gray-800 text-white py-3 rounded-md font-semibold text-lg"
+              onClick={onBackToHome}
+            >
+              Back to Ride Ur Way
+            </button>
+          </div>
         </div>
       </div>
     );
