@@ -21,14 +21,14 @@ function buildTerms(description) {
 }
 
 
+
+
 module.exports.getDistanceAndTime = async (originCoord, destCoord) => {
   const apiKey = process.env.ORS_API_KEY;
 
   try {
-    // OpenRouteService Directions API URL
     const url = 'https://api.openrouteservice.org/v2/directions/driving-car';
 
-    // Construct the body for POST request
     const body = {
       coordinates: [
         [parseFloat(originCoord.lng), parseFloat(originCoord.lat)],
@@ -37,9 +37,8 @@ module.exports.getDistanceAndTime = async (originCoord, destCoord) => {
     };
 
     console.log("Origin Coord:", originCoord);
-console.log("Destination Coord:", destCoord);
-console.log("Sending coordinates to ORS:", JSON.stringify(body));
-
+    console.log("Destination Coord:", destCoord);
+    console.log("Sending coordinates to ORS:", JSON.stringify(body));
 
     const response = await axios.post(url, body, {
       headers: {
@@ -48,14 +47,20 @@ console.log("Sending coordinates to ORS:", JSON.stringify(body));
       }
     });
 
-    // Response data me routes array hota hai, usme distance and duration milega
     const route = response.data.routes[0];
     const distanceMeters = route.summary.distance; // meters
     const durationSeconds = route.summary.duration; // seconds
 
+    // ✅ Convert distance to km and round to 2 decimals
+    const distanceKm = (distanceMeters / 1000).toFixed(2);
+    const durationMin = (durationSeconds / 60).toFixed(1);
+
+    console.log(`Distance: ${distanceKm} km`);
+    console.log(`Duration: ${durationMin} mins`);
+
     return {
-      distance: distanceMeters, // meter me distance
-      duration: durationSeconds // seconds me time
+      distance: parseFloat(distanceKm),  // return in km
+      duration: durationSeconds          // still in seconds if needed for ETA
     };
 
   } catch (error) {

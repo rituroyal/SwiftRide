@@ -10,25 +10,25 @@ import axios from 'axios';
 
 const vehicles = [
   {
-    type: 'UberX',
-    people: 4,
+    type: 'car',
+    people: 6,
     eta: '1:29pm',
     price: 'Rs193.20',
     img: '/image/car1.jpg',
   },
   {
-    type: 'Uber Green',
+    type: 'auto',
     people: 4,
     eta: '1:27pm',
     price: 'Rs193.20',
-    img: '/image/car1.jpg',
+    img: '/image/auto.jpg',
   },
   {
-    type: 'UberXL',
-    people: 6,
+    type: 'moto',
+    people: 2,
     eta: '1:29pm',
     price: 'Rs270.40',
-    img: '/image/car1.jpg',
+    img: '/image/moto.jpg',
   },
 ];
 
@@ -46,7 +46,7 @@ function Home() {
   const [activeInput, setActiveInput] = useState(null); // 'pickup' or 'dropoff'
   const [lookingForDriver, setLookingForDriver] = useState(false);
   const [suggestions, setSuggestions] = useState([]); // State for suggestions
-  
+  const [fare, setFare] = useState({}); // State for fare calculation
   // Animate location panel
   useGSAP(() => {
     gsap.to(panelRef.current, {
@@ -157,7 +157,8 @@ function Home() {
 
 
   // Form submit: open vehicle panel
-  const sumbithandler = (e) => {
+  const vehicleTypes = ['moto', 'auto', 'car'];
+  const sumbithandler = async (e) => {
     e.preventDefault();
     if (!pickupLocation || !dropoffLocation) {
       alert('Please enter both pickup and dropoff locations.');
@@ -167,10 +168,47 @@ function Home() {
       alert('Please enter different pickup and dropoff locations.');
       return;
     }
-    setVehiclePanelOpen(true);
-    setpanelOpen(false);
-    setSelectedVehicle(null); // Reset selection on new search
-    setConfirmedRide(false);  // Reset confirm on new search
+
+    try {
+      // Call backend API to get fare
+      const token = localStorage.getItem('token');
+    const baseURL = `${import.meta.env.VITE_BASE_URL}/api/rides/calculate-Fare`;
+
+    const fareResponses = await Promise.all(
+      vehicleTypes.map(type =>
+        axios.get(baseURL, {
+          params: {
+            pickup: pickupLocation,
+            destination: dropoffLocation,
+            vehicleType: type
+          },
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+      )
+    );
+
+    const fares = {};
+    vehicleTypes.forEach((type, index) => {
+      fares[type] = fareResponses[index].data;
+    });
+
+    console.log('All fares:', fares);
+    setFare(fares); // Save all fares
+
+  
+
+      setVehiclePanelOpen(true);
+      setpanelOpen(false);
+      setSelectedVehicle(null); // Reset selection on new search
+      setConfirmedRide(false);
+    }
+    catch (error) {
+      console.error('Error fetching fare:', error);
+      alert('Error calculating fare. Please try again.');
+    }
+    
   };
 
   // Reset all for Back to Home
@@ -273,14 +311,17 @@ const handleConfirmRide = () => {
         confirmedRide={confirmedRide}
         selectedVehicle={selectedVehicle}
         setSelectedVehicle={setSelectedVehicle}
+        
         vehicles={vehicles}
+        fare={fare}
       />
 
 {lookingForDriver && (
       <LookingForDriver
         selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
         pickupLocation={pickupLocation}
-        dropoffLocation={dropoffLocation}
+          dropoffLocation={dropoffLocation}
+          fare={fare}
         onBackToHome={handleBackToHome}
       />
     )}

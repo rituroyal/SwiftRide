@@ -760,3 +760,69 @@ Logout the authenticated captain and blacklist the JWT token.
 - All endpoints require proper validation as per the comments in the JSON.
 - JWT token is required for profile and logout routes.
 - On logout, the token is blacklisted for 24 hours and cannot be reused.
+
+
+### Calculate Fare API
+Endpoint: GET /rides/calculate-fare
+Purpose: Ride ka estimated fare calculate karta hai, based on pickup and destination locations.
+
+ Authentication
+Required:  Yes
+
+Type: Bearer Token
+
+http
+Copy code
+Authorization: Bearer 
+## Query Parameters
+Name	Type	Required	Description
+pickup	String	Yes	Pickup location (address or lat,lng)
+destination	String	Yes	Destination location (address or lat,lng)
+
+Example:
+
+bash
+Copy code
+GET /rides/calculate-fare?pickup=Rajwada,Indore&destination=Vijay%20Nagar,Indore
+ Success Response (200 OK)
+json
+Copy code
+{
+  "fare": 153.75
+}
+Field	Type	Description
+fare	Number	Estimated fare for the given trip
+
+ Error Responses
+ Missing Parameters (400 Bad Request)
+json
+Copy code
+{
+  "errors": [
+    {
+      "msg": "Pickup location is required",
+      "param": "pickup",
+      "location": "query"
+    }
+  ]
+}
+ Unauthorized (401 Unauthorized)
+json
+Copy code
+{
+  "error": "Unauthorized"
+}
+ Server Error (500 Internal Server Error)
+json
+Copy code
+{
+  "error": "Failed to calculate fare"
+}
+**Notes:**
+Fare calculation is based on distance between pickup and destination.
+
+Address format should be valid and recognized by the backend (e.g., "MG Road, Bangalore").
+
+Distance calculation may use Google Maps or OpenRouteService.
+
+This endpoint is useful for previewing ride cost before booking.

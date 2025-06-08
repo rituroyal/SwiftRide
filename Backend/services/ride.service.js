@@ -70,5 +70,7 @@ function calculateFare(distance, duration, type) {
 
 }
 
+module.exports.calculateFare = calculateFare;
+
 
 

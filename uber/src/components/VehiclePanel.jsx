@@ -2,25 +2,25 @@ import React, { forwardRef } from 'react';
 
 const vehicles = [
   {
-    type: 'UberX',
-    people: 4,
+    type: 'car',
+    people: 6,
     eta: '1:29pm',
     price: 'Rs193.20',
     img: '/image/car1.jpg',
   },
   {
-    type: 'Uber Green',
+    type: 'auto',
     people: 4,
     eta: '1:27pm',
     price: 'Rs193.20',
-    img: '/image/car1.jpg',
+    img: '/image/auto.jpg',
   },
   {
-    type: 'UberXL',
-    people: 6,
+    type: 'moto',
+    people: 2,
     eta: '1:29pm',
     price: 'Rs270.40',
-    img: '/image/car1.jpg',
+    img: '/image/moto.jpg',
   },
 ];
 
@@ -34,6 +34,8 @@ const VehiclePanel = forwardRef(
       confirmedRide,
       selectedVehicle,
       setSelectedVehicle,
+      vehicles,
+      fare,
     },
     ref
   ) => (
@@ -73,7 +75,11 @@ const VehiclePanel = forwardRef(
                 <p className="text-sm text-gray-600">{v.eta} away</p>
                 <p className="text-xs text-gray-500">Affordable, compact rides</p>
               </div>
-              <h4 className="text-lg font-semibold">{v.price}</h4>
+              {/* <h4 className="text-lg font-semibold">{v.price}</h4> */}
+              <h4 className="text-lg font-semibold">
+  {fare[v.type] ? `Rs${fare[v.type].fare}` : v.price}
+</h4>
+
             </div>
           ))}
           {/* Center the Confirm Ride Button */}

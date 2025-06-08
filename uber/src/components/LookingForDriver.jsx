@@ -4,6 +4,7 @@ const LookingForDriver = ({
   selectedVehicle,
   pickupLocation,
   dropoffLocation,
+  fare,
   // onBackToHome,
 }) => {
   return (
@@ -39,7 +40,10 @@ const LookingForDriver = ({
             </div>
             <div className="ml-auto font-bold text-lg flex items-center">
               <i className="ri-currency-line mr-1"></i>
-              {selectedVehicle.price}
+              {fare?.[selectedVehicle.type]?.fare
+              ? `Rs${fare[selectedVehicle.type].fare}`
+              : selectedVehicle.price}
+
             </div>
           </div>
           <div className="mt-2 flex items-center">
