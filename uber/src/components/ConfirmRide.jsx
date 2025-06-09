@@ -18,7 +18,7 @@ const ConfirmRide = forwardRef(
 
     const dynamicPrice =
       selectedVehicle && fare[selectedVehicle.type]
-        ? `Rs ${fare[selectedVehicle.type].fare}`
+        ? `Rs ${fare[selectedVehicle.type]}`
         : selectedVehicle?.price || 'Rs0';
 
     return (

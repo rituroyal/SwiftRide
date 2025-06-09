@@ -18,13 +18,14 @@ const CaptainProtectWrapper = ({
     }, [token, navigate]);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/captain/profile`, {
+        axios.get(`${import.meta.env.VITE_BASE_URL}/captains/profile`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         }).then((response) => {
             if (response.status === 200) {
-                setCaptain(response.data.captain);
+                console.log('Captain data fetched successfully:', response);
+                setCaptain(response.data);
                 setIsLoading(false);
             }
         }).catch((error) => {

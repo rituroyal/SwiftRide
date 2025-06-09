@@ -1,11 +1,13 @@
-import React, { use, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import LocationPanelSearch from '../components/LocationPanelSearch';
 import VehiclePanel from '../components/VehiclePanel';
 import ConfirmRide from '../components/ConfirmRide';
 import LookingForDriver from '../components/LookingForDriver';
+import {SocketContext} from '../context/SocketContext';
 import axios from 'axios';
+import {UserDataContext} from '../context/UserContext';
 // import WaitingForDriver from '../components/WaitingForDriver';
 
 const vehicles = [
@@ -47,6 +49,8 @@ function Home() {
   const [lookingForDriver, setLookingForDriver] = useState(false);
   const [suggestions, setSuggestions] = useState([]); // State for suggestions
   const [fare, setFare] = useState({}); // State for fare calculation
+  const {sendMessage, receiveMessage} = useContext(SocketContext); // Use SocketContext to get sendMessage and socket
+  const {user} = useContext(UserDataContext); // Get userId from UserContext
   // Animate location panel
   useGSAP(() => {
     gsap.to(panelRef.current, {
@@ -100,7 +104,10 @@ function Home() {
     }
   }, [confirmedRide]);
 
-
+  useEffect(() => {
+    console.log('User data:', user);
+    sendMessage('join', { role: 'user',userId: user._id}); // Send join message with userId
+  }, [sendMessage]);
 
   // Function to fetch suggestions
   const fetchSuggestions = async (input, type) => {
@@ -180,28 +187,21 @@ function Home() {
       const token = localStorage.getItem('token');
     const baseURL = `${import.meta.env.VITE_BASE_URL}/api/rides/calculate-Fare`;
 
-    const fareResponses = await Promise.all(
-      vehicleTypes.map(type =>
-        axios.get(baseURL, {
-          params: {
-            pickup: pickupLocation,
-            destination: dropoffLocation,
-            vehicleType: type
-          },
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-      )
-    );
-
-    const fares = {};
-    vehicleTypes.forEach((type, index) => {
-      fares[type] = fareResponses[index].data;
+     const response = await axios.get(baseURL, {
+      params: {
+        pickup: pickupLocation,
+        destination: dropoffLocation
+      },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
 
-    console.log('All fares:', fares);
-    setFare(fares); // Save all fares
+   
+    
+
+    console.log('All fares:', response.data.fares);
+    setFare(response.data.fares); // Save all fares
 
   
 

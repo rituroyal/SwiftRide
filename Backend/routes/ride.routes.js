@@ -8,15 +8,21 @@ const authMiddleware = require('../middleware/auth.middleware');
 router.post('/create',
     authMiddleware.isAuth,
     body('pickup')
+        .notEmpty()
+        .withMessage('Pickup address is required')
         .isString()
         .isLength({ min: 3 })
         .withMessage('Invalid pickup address'),
     
     body('destination')
+        .notEmpty()
+        .withMessage('Destination address is required')
         .isString()
         .isLength({ min: 3 })
         .withMessage('Invalid destination address'),
     body('vehicleType')
+        .notEmpty()
+        .withMessage('Vehicle type is required')
         .isIn(['car', 'auto', 'moto'])
         .withMessage('Invalid vehicle type'),
     rideController.createRide
@@ -33,9 +39,7 @@ router.get('/calculate-Fare',
         .isString()
         .isLength({ min: 3 })
         .withMessage('Invalid destination address'),
-    query('vehicleType')
-        .isIn(['car', 'auto', 'moto'])
-        .withMessage('Invalid vehicle type'),
+    
     rideController.calculateFare
 );
 

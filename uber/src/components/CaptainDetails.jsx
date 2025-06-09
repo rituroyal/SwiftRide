@@ -1,6 +1,17 @@
-import React from 'react'
+import React ,{useContext}from 'react'
+import {CaptainDataContext} from '../context/CaptainContext.jsx';
 
 const CaptainDetails = () => {
+  
+ const { captain } = useContext(CaptainDataContext);
+  // Fallback to localStorage if captain context is not available
+  console.log(captain, 'captain from context');
+  
+  const itemStr = localStorage.getItem('captain');
+  const item = itemStr ? JSON.parse(itemStr) : null;
+  console.log(item, 'item from localStorage');
+    
+
   return (
     <div className="w-full max-w-md border border-gray-300 rounded-xl p-6 bg-gray-50 " style={{height: '260px'}}>
       {/* Profile and Earnings */}
@@ -11,7 +22,7 @@ const CaptainDetails = () => {
             alt="Profile"
             className="h-14 w-14 rounded-full object-cover border-2 border-gray-400"
           />
-          <h3 className="text-xl font-semibold text-gray-900">Harsh Patel</h3>
+          <h3 className="text-xl font-semibold text-gray-900 capitalize">{item?.fullname?.firstname + " "+ item?.fullname?.lastname || "vishaka"}</h3>
         </div>
         <div className="text-right">
           <h4 className="text-2xl font-bold text-gray-900">₹295.20</h4>

@@ -11,7 +11,7 @@ const UserProtectedWrapper = ({
     const {user,setUser}=useContext(UserDataContext);
     const [loading, setLoading] = useState(true)
 
-    console.log(token);
+    
     useEffect(() => {
         if (!token) {
             navigate('/login');
@@ -23,7 +23,7 @@ const UserProtectedWrapper = ({
             }
         }).then(response=>{
             if(response.status===200){
-                setUser(response.data.user);
+                setUser(response.data);
                 setLoading(false);
             }
         }).catch(err=>{

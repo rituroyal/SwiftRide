@@ -32,7 +32,7 @@ module.exports.calculateFare = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { pickup, destination, vehicleType } = req.query;
+    const { pickup, destination } = req.query;
 
     try {
         console.log("Calculating fare for pickup:", pickup, "destination:", destination);
@@ -46,14 +46,18 @@ module.exports.calculateFare = async (req, res) => {
 
         const distanceTime = await mapService.getDistanceAndTime(originCoord, destCoord);
         console.log("Distance:", distanceTime.distance, "km");
-        console.log("Fare:", rideService.calculateFare(distanceTime.distance, distanceTime.duration, vehicleType));
-        const fare = rideService.calculateFare(
-            distanceTime.distance,
-            distanceTime.duration,
-            vehicleType
-        );
+        const vehicleTypes = ['car', 'auto', 'moto'];
+        const fares = {};
 
-        res.status(200).json({ fare });
+        for (const type of vehicleTypes) {
+            fares[type] = rideService.calculateFare(
+                distanceTime.distance,
+                distanceTime.duration,
+                type
+            );
+        }
+
+        res.status(200).json({ fares, distance: distanceTime.distance, duration: distanceTime.duration });
     } catch (error) {
         console.error("Error calculating fare:", error);
         res.status(500).json({ error: "Failed to calculate fare" });

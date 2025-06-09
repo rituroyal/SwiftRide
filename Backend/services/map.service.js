@@ -39,6 +39,7 @@ module.exports.getDistanceAndTime = async (originCoord, destCoord) => {
     console.log("Origin Coord:", originCoord);
     console.log("Destination Coord:", destCoord);
     console.log("Sending coordinates to ORS:", JSON.stringify(body));
+    console.log("ORS API Key:", apiKey);
 
     const response = await axios.post(url, body, {
       headers: {
@@ -46,6 +47,7 @@ module.exports.getDistanceAndTime = async (originCoord, destCoord) => {
         'Content-Type': 'application/json'
       }
     });
+    console.log("ORS Response:", response);
 
     const route = response.data.routes[0];
     const distanceMeters = route.summary.distance; // meters

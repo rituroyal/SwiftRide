@@ -77,7 +77,7 @@ const VehiclePanel = forwardRef(
               </div>
               {/* <h4 className="text-lg font-semibold">{v.price}</h4> */}
               <h4 className="text-lg font-semibold">
-  {fare[v.type] ? `Rs${fare[v.type].fare}` : v.price}
+  {fare[v.type] ? `Rs${fare[v.type]}` : v.price}
 </h4>
 
             </div>
