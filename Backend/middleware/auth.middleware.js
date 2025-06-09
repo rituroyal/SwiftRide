@@ -20,7 +20,8 @@ module.exports.isAuth=async(req,res,next)=>{
     try{
         //utna hi data milega jitna dala tha matlab sirf id
         const decoded=jwt.verify(token,process.env.JWT_SECRET_KEY);
-       
+         req.token = token;
+         req.decodedId = decoded._id;
         next();
     }
     catch(error){
@@ -28,25 +29,31 @@ module.exports.isAuth=async(req,res,next)=>{
     }
 }
 
-module.exports.isCaptainAuth = async (req, res, next) => {
-    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
-    console.log("Token received:", token);
-
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    // Token ko verify karna hai
-    const isBlacklisted = await BlacklistToken.findOne({ token: token });
-    if (isBlacklisted) {
-        return res.status(401).json({ error: 'Token is blacklisted' });
-    }
-
+module.exports.isUserAuth = async (req, res, next) => {
+    
     try {
         // Utna hi data milega jitna dala tha matlab sirf id
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        const Captain = await captainModel.findById(decoded._id);
-        req.captain = await Captain.findById(decoded._id);
+        
+        const user = await User.findById(req.decodedId).select('-password'); // +password to include password field if needed
+        if (!user) {
+            return res.status(401).json({ error: 'User not found' });
+        }
+        req.user = user;
+    } catch (error) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    next();
+}
+
+module.exports.isCaptainAuth = async (req, res, next) => {
+    
+    try {
+        // Utna hi data milega jitna dala tha matlab sirf id
+        const Captain = await captainModel.findById(req.decodedId).select('-password'); // +password to include password field if needed
+        if (!Captain) {
+            return res.status(401).json({ error: 'Captain not found' });
+        }
+        req.captain = Captain
     }
     catch (error) {
         return res.status(401).json({ error: 'Unauthorized' });

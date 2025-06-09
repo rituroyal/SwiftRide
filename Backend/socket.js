@@ -22,12 +22,31 @@ function initializeSocket(server) {
 
     socket.on('join', async (data) => {
       const { userId, role } = data;
+        console.log(`User with ID ${userId} and role ${role} joined with socket ID: ${socket.id}`);
       if (role === 'user') {
         await user.findByIdAndUpdate(userId, { socketId: socket.id });
        
       } else if (role === 'captain') {
         await captain.findByIdAndUpdate(userId, { socketId: socket.id });
       }
+    });
+
+    socket.on('updateLocation', async(data) => {
+        const { userId,  location } = data;
+
+        if(!location || !location.ltd || !location.lng) {
+            console.error('Invalid location data:', location);  
+        }
+       
+        await captain.findByIdAndUpdate(userId, { location:{
+            ltd: location.ltd,
+            lng: location.lng
+        } });
+        
+       
+        
+
+        
     });
 
     socket.on('disconnect', () => {

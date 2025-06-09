@@ -128,3 +128,18 @@ module.exports.getSuggestions = async (input) => {
   }
 };
 
+module.exports.getCaptainInTheRadius= async (lat, lng, radius = 5000) => {
+  try {
+    const captains = await captainModel.find({
+      location: {
+        $geoWithin: {
+          $centerSphere: [[lng, lat], radius / 3962.2]
+        }
+      }
+    });
+    return captains;
+  } catch (error) {
+    console.error('Error fetching captains in radius:', error);
+    throw new Error('Unable to fetch captains');
+  }
+};

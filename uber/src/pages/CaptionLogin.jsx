@@ -16,17 +16,17 @@ function CaptionLogin() {
 
         const submitHandler=async(e)=>{
             e.preventDefault();
-           const captainr = {
+           const captain = {
              email: email,
              password: password
           }
           
-          const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captainr) 
+          const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captain) 
 
           console.log(response.data, 'captain login response')
           if(response.data){
           updateCaptain(response.data.captain)
-          
+
           localStorage.setItem('token', response.data.token) // Store the token in localStorage
           }
           setEmail('')

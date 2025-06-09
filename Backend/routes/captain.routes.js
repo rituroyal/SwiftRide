@@ -26,8 +26,8 @@ router.post('/login', [
     captainController.loginCaptain
 ); 
 
-router.get('/profile', authMiddleware.isAuth, captainController.getCaptainProfile);
+router.get('/profile', authMiddleware.isAuth, authMiddleware.isCaptainAuth, captainController.getCaptainProfile);
 
 
-router.get('/logout', authMiddleware.isAuth, captainController.logoutCaptain);
+router.get('/logout', authMiddleware.isAuth, authMiddleware.isCaptainAuth, captainController.logoutCaptain);
 module.exports = router;

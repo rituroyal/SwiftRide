@@ -49,7 +49,7 @@ function Home() {
   const [lookingForDriver, setLookingForDriver] = useState(false);
   const [suggestions, setSuggestions] = useState([]); // State for suggestions
   const [fare, setFare] = useState({}); // State for fare calculation
-  const {sendMessage, receiveMessage} = useContext(SocketContext); // Use SocketContext to get sendMessage and socket
+  const {socket} = useContext(SocketContext); // Use SocketContext to get sendMessage and socket
   const {user} = useContext(UserDataContext); // Get userId from UserContext
   // Animate location panel
   useGSAP(() => {
@@ -106,8 +106,8 @@ function Home() {
 
   useEffect(() => {
     console.log('User data:', user);
-    sendMessage('join', { role: 'user',userId: user._id}); // Send join message with userId
-  }, [sendMessage]);
+    socket.emit('join', { role: 'user',userId: user._id}); // Send join message with userId
+  }, [user]);
 
   // Function to fetch suggestions
   const fetchSuggestions = async (input, type) => {

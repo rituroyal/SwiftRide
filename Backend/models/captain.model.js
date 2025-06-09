@@ -58,11 +58,10 @@ const captainSchema = new mongoose.Schema({
             enum: ['car', 'motorcycle', 'auto'], // Example vehicle types
         },
         location: {
-           latitude: {
+             ltd: {
                 type: Number,
-                
             },
-            longitude: {
+            lng: {
                 type: Number,
                 
             },

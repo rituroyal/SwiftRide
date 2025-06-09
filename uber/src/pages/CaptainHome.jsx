@@ -1,18 +1,27 @@
 
 
-import React ,{useState} from 'react';
+import React ,{useEffect, useState,useContext} from 'react';
 import { Link } from 'react-router-dom';
 import CaptainDetails from '../components/CaptainDetails';
 import RidePopUp from '../components/RidePopUp';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp';
+import { CaptainDataContext } from '../context/CaptainContext';
+import { SocketContext } from '../context/SocketContext';
 
 const CaptainHome = () => {
   const [ridePopPanel, setRidePopPanel] = useState(false);
   const [confirmRidePopPanel, setConfirmRidePopPanel] = useState(false);
   const ridePopPanelRef = React.useRef(null);
   const confirmRidePopPanelRef = React.useRef(null);
+  const { captain } = useContext(CaptainDataContext);
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+     console.log('Captain data:', captain);
+     socket.emit('join', {userId: captain._id, role: "captain"});
+  }, [captain]);
 
   useGSAP(() => {
     // GSAP animations can be added here if needed

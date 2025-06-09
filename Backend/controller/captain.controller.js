@@ -65,8 +65,12 @@ module.exports.loginCaptain = async (req, res) => {
 }
 
 module.exports.getCaptainProfile = async (req, res) => {
+    // req.captain should be set by your auth middleware
+    if (!req.captain) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
     res.status(200).json(req.captain);
-}
+};
 
 module.exports.logoutCaptain = async (req, res) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1]; 
