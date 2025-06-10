@@ -19,9 +19,32 @@ const CaptainHome = () => {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-     console.log('Captain data:', captain);
+     
      socket.emit('join', {userId: captain._id, role: "captain"});
-  }, [captain]);
+
+    const updateLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          console.log('Current Location:',captain, latitude, longitude);
+          socket.emit('updateLocation', {
+            userId: captain._id,
+            location: { ltd: latitude, lng: longitude }
+          });
+        }, (error) => {
+          console.error('Error getting location:', error);
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    }
+
+    const locationInterval = setInterval(updateLocation, 10000); // Update location every 5 seconds
+    updateLocation(); // Initial location update
+    // return () => {
+    //   clearInterval(locationInterval);
+    // };
+  });
 
   useGSAP(() => {
     // GSAP animations can be added here if needed

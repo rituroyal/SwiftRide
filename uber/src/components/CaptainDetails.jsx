@@ -5,7 +5,7 @@ const CaptainDetails = () => {
   
  const { captain } = useContext(CaptainDataContext);
   // Fallback to localStorage if captain context is not available
-  console.log(captain, 'captain from context');
+ 
   
  
     

@@ -26,9 +26,9 @@ function ConfirmRidePopUp(props) {
               <p className="text-gray-600 font-bold italic mb-2">Ritu Raj</p>
             </div>
             <div>
-              <p className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'> 24B, Near Kapoor’s cafe, Sheryians Coding School, Bhopal</p></p>
-            <p className="text-gray-600 font-semibold mb-2">Dropoff Location:<p className='text-base'> 14A, Opposite DB Mall, MP Nagar, Bhopal</p></p>
-            <p className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'> ₹150</p></p>
+              <div className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'> 24B, Near Kapoor’s cafe, Sheryians Coding School, Bhopal</p></div>
+            <div className="text-gray-600 font-semibold mb-2">Dropoff Location:<p className='text-base'> 14A, Opposite DB Mall, MP Nagar, Bhopal</p></div>
+            <div className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'> ₹150</p></div>
             </div>
             <div className='flex flex-col w-full px-4 '>
               <form onSubmit={(e)=>{submitHandler(e)}} >

@@ -57,7 +57,8 @@ const captainSchema = new mongoose.Schema({
             required: true,
             enum: ['car', 'motorcycle', 'auto'], // Example vehicle types
         },
-        location: {
+        
+    },location: {
              ltd: {
                 type: Number,
             },
@@ -66,7 +67,6 @@ const captainSchema = new mongoose.Schema({
                 
             },
        }
-    },
 });
 
 captainSchema.methods.generateAuthToken = async function () {

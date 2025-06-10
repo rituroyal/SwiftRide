@@ -32,21 +32,22 @@ function initializeSocket(server) {
     });
 
     socket.on('updateLocation', async(data) => {
-        const { userId,  location } = data;
+        const { userId, location } = data;
 
-        if(!location || !location.ltd || !location.lng) {
-            console.error('Invalid location data:', location);  
+        // Check for valid location data (latitude and longitude)
+        if (!location || typeof location.ltd !== 'number' || typeof location.lng !== 'number') {
+            console.error('Invalid location data:', location);
+            return;
         }
-       
-        await captain.findByIdAndUpdate(userId, { location:{
-            ltd: location.ltd,
-            lng: location.lng
-        } });
-        
-       
-        
 
-        
+        try {
+            await captain.findByIdAndUpdate(userId,  { location: {
+                ltd: location.ltd,
+                lng: location.lng
+            } } );
+        } catch (err) {
+            console.error('Error updating captain location:', err);
+        }
     });
 
     socket.on('disconnect', () => {
