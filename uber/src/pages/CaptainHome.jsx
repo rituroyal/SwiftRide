@@ -17,6 +17,7 @@ const CaptainHome = () => {
   const confirmRidePopPanelRef = React.useRef(null);
   const { captain } = useContext(CaptainDataContext);
   const { socket } = useContext(SocketContext);
+  const [rideData, setRideData] = useState(null);
 
   useEffect(() => {
      
@@ -26,7 +27,7 @@ const CaptainHome = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
-          console.log('Current Location:',captain, latitude, longitude);
+          //console.log('Current Location:',captain, latitude, longitude);
           socket.emit('updateLocation', {
             userId: captain._id,
             location: { ltd: latitude, lng: longitude }
@@ -45,6 +46,25 @@ const CaptainHome = () => {
     //   clearInterval(locationInterval);
     // };
   });
+
+  socket.on('new-ride', (data) => {
+    console.log('Ride request received:', data);
+    setRideData(data);
+    setRidePopPanel(true);
+    
+    // You can also set the ride data in state if needed
+  });
+
+  const confirmRide = async() => {
+    const response=await axios.post('/ride/confirm', {
+      rideId: rideData._id,
+      captainId: captain._id,
+      otp: rideData.otp
+    });
+
+    setConfirmRidePopPanel(true);
+    setRidePopPanel(false);
+  };
 
   useGSAP(() => {
     // GSAP animations can be added here if needed
@@ -103,7 +123,13 @@ const CaptainHome = () => {
         <CaptainDetails />
       </div>
       <div ref={ridePopPanelRef} className='flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30  flex flex-col items-center rounded-t-2xl shadow-lg'>
-        <RidePopUp setRidePopPanel={setRidePopPanel} setConfirmRidePopPanel={setConfirmRidePopPanel} />
+        <RidePopUp 
+        rideData={rideData}
+        setRideData={setRideData}
+        setRidePopPanel={setRidePopPanel} 
+        setConfirmRidePopPanel={setConfirmRidePopPanel}
+        confirmRide={confirmRide}
+      />
       </div>
       <div ref={confirmRidePopPanelRef} className='flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30  flex flex-col items-center rounded-t-2xl shadow-lg'>
         <ConfirmRidePopUp setConfirmRidePopPanel={setConfirmRidePopPanel} setRidePopPanel={setRidePopPanel} />

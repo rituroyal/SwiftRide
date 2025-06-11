@@ -15,17 +15,18 @@ const RidePopUp = (props) => {
                 alt="Ride Image"
                 className="h-20 w-20 object-contain rounded-full bg-gray-100 p-1 shadow-lg mb-4"
               />
-              <p className="text-gray-600 font-bold italic mb-2">Ritu Raj</p>
+              <p className="text-gray-600 font-bold italic mb-2">{props.rideData?.user?.fullname?.firstname + " "} {props.rideData?.user?.fullname?.lastname}</p>
             </div>
             <div>
-              <div className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'> 24B, Near Kapoor’s cafe, Sheryians Coding School, Bhopal</p></div>
-            <div className="text-gray-600 font-semibold mb-2">Dropoff Location:<p className='text-base'> 14A, Opposite DB Mall, MP Nagar, Bhopal</p></div>
-            <div className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'> ₹150</p></div>
+              <div className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'>{props.rideData?.pickup} </p></div>
+            <div className="text-gray-600 font-semibold mb-2">Dropoff Location:<p className='text-base'>{props.rideData?.destination}</p></div>
+            <div className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'> ₹{props.rideData?.fare}</p></div>
             </div>
             <div className='flex flex-col w-full px-4 '>
               <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3"
               onClick={() => {
                 props.setRidePopPanel(false);
+                props.confirmRide()
                 props.setConfirmRidePopPanel(true);
               }}>
             Accept

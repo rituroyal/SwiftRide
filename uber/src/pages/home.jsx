@@ -166,7 +166,13 @@ function Home() {
     setpanelOpen(false); // Close the suggestion panel
   };
 
-
+  socket.on('ride-confirmed', (data) => {
+    console.log('Ride confirmed:', data);
+    setLookingForDriver(true);
+    setVehiclePanelOpen(false);
+    
+    // Handle ride confirmation (e.g., show success message)
+  });
 
 
   // Form submit: open vehicle panel
@@ -237,7 +243,17 @@ const handleConfirmRide = () => {
   setConfirmedRide(true);
   };
   
-  const handleFinalConfirmRide = () => {
+  const handleFinalConfirmRide = async() => {
+    const token=localStorage.getItem('token');
+    const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/rides/create`,{
+      pickup:pickupLocation,
+      destination:dropoffLocation,
+      vehicleType:vehicles[selectedVehicle].type,
+       headers: {
+          Authorization:`Bearer ${token}`  // Use token from localStorage
+        },
+    })
+    console.log(response)
     setLookingForDriver(true);
     setConfirmedRide(false);
   };

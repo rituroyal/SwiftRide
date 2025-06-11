@@ -62,15 +62,16 @@ function initializeSocket(server) {
  * @param {any} message - The message/data to send.
  * @param {string} [socketId] - Optional socket ID to send to a specific client.
  */
-function sendMessage(event, message, socketId) {
+function sendMessage(socketId, message) {
   if (!io) {
     console.error('Socket.io not initialized');
     return;
   }
+  console.log(`Sending message: ${message.event} to socket ID: ${socketId || 'all'}`);
   if (socketId) {
-    io.to(socketId).emit(event, message);
+    io.to(socketId).emit(message.event, message.data);
   } else {
-    io.emit(event, message);
+    io.emit(message.event, message.data);
   }
 }
 

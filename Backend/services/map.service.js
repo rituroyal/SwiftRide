@@ -1,4 +1,5 @@
 const { default: axios } = require("axios");
+const captainModel = require('../models/captain.model');
 
 
 require('dotenv').config();
@@ -36,10 +37,10 @@ module.exports.getDistanceAndTime = async (originCoord, destCoord) => {
       ]
     };
 
-    console.log("Origin Coord:", originCoord);
-    console.log("Destination Coord:", destCoord);
-    console.log("Sending coordinates to ORS:", JSON.stringify(body));
-    console.log("ORS API Key:", apiKey);
+    //console.log("Origin Coord:", originCoord);
+    //console.log("Destination Coord:", destCoord);
+    //console.log("Sending coordinates to ORS:", JSON.stringify(body));
+    //console.log("ORS API Key:", apiKey);
 
     const response = await axios.post(url, body, {
       headers: {
@@ -47,7 +48,7 @@ module.exports.getDistanceAndTime = async (originCoord, destCoord) => {
         'Content-Type': 'application/json'
       }
     });
-    console.log("ORS Response:", response);
+    //console.log("ORS Response:", response);
 
     const route = response.data.routes[0];
     const distanceMeters = route.summary.distance; // meters
@@ -86,7 +87,7 @@ module.exports.getAddressCoordinate=async(address)=>{
       }
   });
 
-  console.log("Response from Nominatim API:", response.data);
+  //console.log("Response from Nominatim API:", response.data);
     if (response.data.length === 0) {
       throw new Error('No results from Nominatim');
     }

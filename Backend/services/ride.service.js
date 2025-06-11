@@ -73,4 +73,15 @@ function calculateFare(distance, duration, type) {
 module.exports.calculateFare = calculateFare;
 
 
-
+module.exports.confirmRide=async(rideId, captainId)=> {
+    if (!rideId || !captainId) {
+        throw new Error("Ride ID and Captain ID are required");
+    }
+    return rideModel.findOneAndUpdate(
+        { _id: rideId },
+        { status: 'accepted',
+         captain: captainId
+         },
+        { new: true }
+    ).populate('user');
+}

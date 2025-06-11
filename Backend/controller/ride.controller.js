@@ -1,7 +1,8 @@
 const { validationResult } = require('express-validator');
 const rideService = require('../services/ride.service');
 const mapService = require('../services/map.service');
-const {sendMessage}=require("../socket.js")
+const {sendMessage}=require("../socket.js");
+const rideModel = require('../models/ride.model.js');
 module.exports.createRide = async (req, res) => {
 
     const errors = validationResult(req);
@@ -12,25 +13,27 @@ module.exports.createRide = async (req, res) => {
     const { userId, pickup, destination, vehicleType } = req.body;
 
     try {
-        console.log("Creating ride for user:", req.user._id);
+        console.log("Creating ride for user:", req.user);
         const ride = await rideService.createRide({
             user: req.user._id,
             pickup,
             destination,
             vehicleType
-        });
+        })
          res.status(201).json(ride);
 
          const pickupCoord = await mapService.getAddressCoordinate(pickup);
-        console.log("Pickup coordinates:", pickupCoord);
-        const captainRadius = await mapService.getCaptainInTheRadius(pickupCoord.lat, pickupCoord.lng, 5); // 5 km radius
-        console.log("Captains in the radius:", captainRadius);
+        
+        const captainRadius = await mapService.getCaptainInTheRadius(pickupCoord.lat, pickupCoord.lng, 20); // 5 km radius
+       
         ride.otp='';
+        const rideWithUser = await rideModel.findOne({_id:ride._id}).populate('user');
+        console.log("Ride created:", rideWithUser);
 
         captainRadius.map(captain=>{
-            sendMessage(captain._id, {
+            sendMessage(captain.socketId, {
                 event:'new-ride',
-                data:ride
+                data:rideWithUser
             });
         }) 
     } catch (error) {
@@ -58,7 +61,7 @@ module.exports.calculateFare = async (req, res) => {
         }
 
         const distanceTime = await mapService.getDistanceAndTime(originCoord, destCoord);
-        console.log("Distance:", distanceTime.distance, "km");
+        //console.log("Distance:", distanceTime.distance, "km");
         const vehicleTypes = ['car', 'auto', 'moto'];
         const fares = {};
 
@@ -74,6 +77,34 @@ module.exports.calculateFare = async (req, res) => {
     } catch (error) {
         console.error("Error calculating fare:", error);
         res.status(500).json({ error: "Failed to calculate fare" });
+    }
+};
+
+module.exports.confirmRide = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { rideId } = req.body;
+
+    try {
+        
+        const ride = await rideService.confirmRide(rideId, req.captain._id);
+        if (!ride) {
+            return res.status(404).json({ error: "Ride not found or already confirmed" });
+        }
+
+        // Notify the user about the ride confirmation
+        sendMessage(ride.user.socketId, {
+            event: 'ride-confirmed',
+            data: ride
+        });
+
+        res.status(200).json(ride);
+    } catch (error) {
+        console.error("Error confirming ride:", error);
+        res.status(500).json({ error: "Failed to confirm ride" });
     }
 };
 
