@@ -13,7 +13,8 @@ const rideRoutes = require('./routes/ride.routes');
 dotenv.config();
 
 app.use(cors({
-    origin: '*',  
+  // origin: '*',  
+  origin: 'http://localhost:5173',
     credentials: true                // allow cookies / headers
   }));
   

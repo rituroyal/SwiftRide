@@ -1,20 +1,37 @@
-import React, { useState,createContext } from 'react'
 
-export const UserDataContext=createContext()
-//pure application ko wrap karna hai
-const UserContext = ({children}) => {
-    const [user, setUser] = useState({
-        email:'',
-        fullName:{
-            firstName:'',
-            lastName:''
-        }
-    })
+import React, { useState, useEffect, createContext } from 'react'
+import axios from 'axios'
+
+export const UserDataContext = createContext()
+
+const UserContext = ({ children }) => {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/users/profile', {
+          withCredentials: true // ✅ IMPORTANT: Send token cookie
+        })
+        setUser(res.data)
+      } catch (err) {
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
+  // Optional: don't render app until user is checked
+  if (loading) return <div>Loading...</div>
+
   return (
-    
-        
-      <UserDataContext.Provider value={{user, setUser}}>{children}</UserDataContext.Provider>
-    
+    <UserDataContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserDataContext.Provider>
   )
 }
 

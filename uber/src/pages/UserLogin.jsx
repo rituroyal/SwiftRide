@@ -60,8 +60,20 @@ function UserLogin(){
       </div>
 
       <div>
-        <NavLink to='/CaptainLogin' className='bg-[#10b461] text-white flex justify-center items-centerfont-semibold mb-7 rounded px-2 py-2  w-full text-lg placeholder:text-base'>Sign in as Captain</NavLink>
+        <NavLink to='/CaptainLogin' className='bg-[#10b461] text-white flex justify-center items-centerfont-semibold mb-7 rounded px-2 py-2  w-full text-lg placeholder:text-base'>Sign in as Captain
+        
+        </NavLink>
       </div>
+
+      
+      
+      
+      <NavLink
+    to="/otp-login"
+    className="bg-[#007bff] text-white flex justify-center items-center font-semibold rounded px-2 py-2 w-full text-lg hover:bg-[#0056b3] transition"
+  >
+    User Login with Phone OTP
+  </NavLink>
     </div>
   )
 }

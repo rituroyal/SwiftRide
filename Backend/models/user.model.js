@@ -17,6 +17,12 @@ const userSchema=new mongoose.Schema({
             trim:true,
         }
     },
+    phone: {
+        type: String,
+        trim: true,
+        unique: true,   // <- Important so one user per phone
+        sparse: true    // <- Allows either email or phone to be used (not both required)
+      },
     email:{
         type:String,
         required:true,

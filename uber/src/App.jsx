@@ -13,6 +13,7 @@ import CaptainProtectWrapper from './pages/CaptainProtectWrapper.jsx'
 import Riding from './pages/Riding.jsx'
 import CaptainRiding from './pages/CaptainRiding.jsx'
 import 'remixicon/fonts/remixicon.css'
+import OtpLogin from './pages/OtpLogin.jsx'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path='/signup' element={<UserSignup/>} />
         <Route path='/CaptainLogin' element={<CaptionLogin/>} />
         <Route path='/CaptainSignup' element={<CaptainSignup />} />
+        <Route path="/otp-login" element={<OtpLogin />} />
         <Route path='/home' element={
           <UserProtectedWrapper>
             <Home />

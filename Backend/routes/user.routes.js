@@ -15,6 +15,9 @@ router.post('/login',[
 
 router.get('/profile', authMiddleware.isAuth,authMiddleware.isUserAuth, userController.profile)
 router.get('/logout', authMiddleware.isAuth, authMiddleware.isUserAuth, userController.logoutUser)
+
+router.post('/send-otp', userController.sendOtp);
+router.post('/verify-otp', userController.verifyOtp);
 module.exports=router;
 
 
