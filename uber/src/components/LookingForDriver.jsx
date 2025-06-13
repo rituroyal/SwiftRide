@@ -7,6 +7,7 @@ const LookingForDriver = ({
   fare,
   // onBackToHome,
 }) => {
+  console.log(fare,selectedVehicle)
   return (
     <div
       className="absolute bottom-0 left-0 w-full bg-white z-30 p-6 flex flex-col items-center justify-between min-h-[60vh] rounded-t-2xl shadow-lg"
@@ -40,8 +41,8 @@ const LookingForDriver = ({
             </div>
             <div className="ml-auto font-bold text-lg flex items-center">
               <i className="ri-currency-line mr-1"></i>
-              {fare?.[selectedVehicle.type]?.fare
-              ? `Rs${fare[selectedVehicle.type].fare}`
+              {fare?.[selectedVehicle.type]
+              ? `Rs${fare[selectedVehicle.type]}`
               : selectedVehicle.price}
 
             </div>

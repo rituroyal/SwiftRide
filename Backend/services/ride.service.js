@@ -1,5 +1,6 @@
 
 const rideModel = require('../models/ride.model');
+const { sendMessage } = require('../socket');
 const { getAddressCoordinate, getDistanceAndTime } = require('./map.service');
 
 const crypto = require("crypto");
@@ -83,5 +84,41 @@ module.exports.confirmRide=async(rideId, captainId)=> {
          captain: captainId
          },
         { new: true }
-    ).populate('user');
+    ).populate('user captain').select('+otp');
+}
+
+
+module.exports.startRide=async(rideId,captain,otp)=>{
+    // if(!rideId || !otp){
+    //     throw new Error('Ride Id and OTP is required')
+    // }
+    const ride=await rideModel.findOne({
+        _id:rideId,
+
+    }).populate('user').populate('captain').select("+otp");
+
+    console.log("fghyuygtvf",ride)
+
+    if(!ride){
+        throw new Error('Ride Not Found');
+    }
+    if(ride.status!=='accepted'){
+        throw new Error('Ride not Accepted')
+    }
+    if(ride.otp!==otp){
+        throw new Error('Invalid Otp');
+    }
+
+    await rideModel.findOneAndUpdate({
+        _id:rideId
+    },{
+        status:'ongoing'
+    })
+
+    sendMessage(ride.user.socketId,{
+        event:'ride-started',
+        data:ride
+    })
+    return ride;
+
 }

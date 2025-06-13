@@ -14,7 +14,7 @@ dotenv.config();
 
 app.use(cors({
   // origin: '*',  
-  origin: 'http://localhost:5173',
+  origin: '*',
     credentials: true                // allow cookies / headers
   }));
   

@@ -43,7 +43,7 @@ router.get('/calculate-Fare',
     rideController.calculateFare
 );
 
-router.post("/confirm-ride",
+router.post("/confirm",
     authMiddleware.isAuth,authMiddleware.isCaptainAuth,
     body('rideId')
         .notEmpty()
@@ -53,6 +53,19 @@ router.post("/confirm-ride",
     
     rideController.confirmRide
 );
+
+
+router.get('/start-ride',authMiddleware.isAuth,authMiddleware.isCaptainAuth,
+     query('rideId')
+        .notEmpty()
+        .withMessage('Ride ID is required')
+        .isMongoId()
+        .withMessage('Invalid Ride ID'),
+        query('otp')
+        .isString().isLength({min:6,max:6}).withMessage('Invalid Otp Lenght'),
+        rideController.rideStart
+
+)
 
 
 

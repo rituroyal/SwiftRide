@@ -1,13 +1,36 @@
 import React,{useState} from 'react'
 import { Link } from 'react-router-dom';
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 
 function ConfirmRidePopUp(props) {
     const [otp, setotp] = useState("")
+    const navigate=useNavigate()
 
-    const submitHandler = (e) => {
+    const submitHandler = async(e) => {
       e.preventDefault();
       // Handle OTP submission logic here
+      const token=localStorage.getItem('token');
+      const res=await axios.get(`${import.meta.env.VITE_BASE_URL}/api/rides/start-ride`,{
+        params:{
+          rideId:props.confirmRideData._id,
+          otp:otp
+        },
+        headers:{
+        Authorization: `Bearer ${token}`
+      }
+      },
+    )
+
+    if(res.status===200){
+      props.setConfirmRidePopPanel(false)
+      navigate('/captain-riding');
+
+    }
+
+
+
 
     };
   return (
@@ -23,21 +46,25 @@ function ConfirmRidePopUp(props) {
                 alt="Ride Image"
                 className="h-20 w-20 object-contain rounded-full bg-gray-100 p-1 shadow-lg mb-4"
               />
-              <p className="text-gray-600 font-bold italic mb-2">Ritu Raj</p>
+              <p className="text-gray-600 font-bold italic mb-2">{props?.confirmRideData?.user?.fullname?.firstname + " " + props?.confirmRideData?.user?.fullname?.lastname}</p>
             </div>
             <div>
-              <div className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'> 24B, Near Kapoor’s cafe, Sheryians Coding School, Bhopal</p></div>
-            <div className="text-gray-600 font-semibold mb-2">Dropoff Location:<p className='text-base'> 14A, Opposite DB Mall, MP Nagar, Bhopal</p></div>
-            <div className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'> ₹150</p></div>
+              <div className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'> {props?.confirmRideData?.pickup}</p></div>
+            <div className="text-gray-600 font-semibold mb-2">Dropoff Location:<p className='text-base'> {props.confirmRideData?.destination}</p></div>
+            <div className="text-gray-600 font-semibold mb-4">Estimated Fare:<p className='text-base'>{props.confirmRideData?.fare} </p></div>
             </div>
             <div className='flex flex-col w-full px-4 '>
               <form onSubmit={(e)=>{submitHandler(e)}} >
-                <input type="text" value={otp} onChange={(e)=>{setotp(e.target.value)}} placeholder='Enter OTP' className='w-full px-4 py-2 border border-gray-300 rounded-lg mb-3' required />
-                <Link to='/captain-riding' className="bg-green-500 flex items-center justify-center text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3">
-            Confirm Ride
-            
-            </Link>
-            <button onClick={() => {props.setRidePopPanel(false); props.setConfirmRidePopPanel(false);}} className="bg-zinc-400 text-white px-4 py-2 rounded-lg hover:bg-zinc-500 transition duration-200 my-3">
+                <input onChange={(e)=>setotp(e.target.value)} placeholder='Enter OTP' className='w-full px-4 py-2 border border-gray-300 rounded-lg mb-3' required />
+                        <button
+                          type='submit'
+                          className={`bg-green-500 flex items-center justify-center w-full text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3 ${otp.length!=6 ? 'opacity-50 pointer-events-none' : ''}`}
+                          tabIndex={!otp ? -1 : 0}
+                          aria-disabled={!otp}
+                        >
+                          Confirm Ride
+                        </button>
+                        <button onClick={() => {props.setRidePopPanel(false); props.setConfirmRidePopPanel(false);}} className="bg-zinc-400 w-full text-white px-4 py-2 rounded-lg hover:bg-zinc-500 transition duration-200 my-3">
             Cancel Ride
             </button>
               </form>

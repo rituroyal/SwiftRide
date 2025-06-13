@@ -7,7 +7,7 @@ const captainModel = require('../models/captain.model');
 
 module.exports.isAuth=async(req,res,next)=>{
     const token=req.cookies.token || (req.body && req.body.token) ||(req.header('Authorization') ? req.header('Authorization').replace(/^bearer\s+/i, '') : '');
-    console.log('token',token)
+    
     if(!token){
         return res.status(401).json({error:'Unauthorized'});
     }

@@ -9,6 +9,7 @@ import { gsap } from 'gsap';
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp';
 import { CaptainDataContext } from '../context/CaptainContext';
 import { SocketContext } from '../context/SocketContext';
+import axios from 'axios';
 
 const CaptainHome = () => {
   const [ridePopPanel, setRidePopPanel] = useState(false);
@@ -18,6 +19,7 @@ const CaptainHome = () => {
   const { captain } = useContext(CaptainDataContext);
   const { socket } = useContext(SocketContext);
   const [rideData, setRideData] = useState(null);
+  const [confirmRideData, setConfirmRideData] = useState(null);
 
   useEffect(() => {
      
@@ -56,11 +58,20 @@ const CaptainHome = () => {
   });
 
   const confirmRide = async() => {
-    const response=await axios.post('/ride/confirm', {
+    const token=localStorage.getItem('token');
+    const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/rides/confirm`, {
       rideId: rideData._id,
       captainId: captain._id,
-      otp: rideData.otp
-    });
+    },
+    {
+       headers: {
+          Authorization:`Bearer ${token}`  // Use token from localStorage
+        },
+    }
+  );
+
+  console.log("efidvfovjo9",response)
+  setConfirmRideData(response.data);
 
     setConfirmRidePopPanel(true);
     setRidePopPanel(false);
@@ -132,7 +143,7 @@ const CaptainHome = () => {
       />
       </div>
       <div ref={confirmRidePopPanelRef} className='flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30  flex flex-col items-center rounded-t-2xl shadow-lg'>
-        <ConfirmRidePopUp setConfirmRidePopPanel={setConfirmRidePopPanel} setRidePopPanel={setRidePopPanel} />
+        <ConfirmRidePopUp confirmRideData={confirmRideData} setConfirmRidePopPanel={setConfirmRidePopPanel} setRidePopPanel={setRidePopPanel} />
       </div>
     </div>
   );

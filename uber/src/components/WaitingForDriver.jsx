@@ -1,9 +1,32 @@
 import React from 'react';
 
 const driverImg = '/image/male.jpg'; 
-const carImg = '/image/car1.jpg';  
+const vehicles = [
+  {
+    type: 'car',
+    people: 6,
+    eta: '1:29pm',
+    price: 'Rs193.20',
+    img: '/image/car1.jpg',
+  },
+  {
+    type: 'auto',
+    people: 4,
+    eta: '1:27pm',
+    price: 'Rs193.20',
+    img: '/image/auto.jpg',
+  },
+  {
+    type: 'moto',
+    people: 2,
+    eta: '1:29pm',
+    price: 'Rs270.40',
+    img: '/image/moto.jpg',
+  },
+];   
 
-const WaitingForDriver = () => {
+const WaitingForDriver = (props) => {
+  //console.log(props.rideConfirm,props.selectedVehicle)
   return (
     <div className="absolute bottom-0 left-0 w-full bg-white z-30 p-6 flex flex-col items-center min-h-[70vh] rounded-t-2xl shadow-lg">
       {/* Driver and Car Info */}
@@ -16,23 +39,24 @@ const WaitingForDriver = () => {
         />
         {/* Car Image */}
         <img
-          src={carImg}
+          src={vehicles[props.selectedVehicle].img}
           alt="Suzuki S-Presso"
           className="h-16 w-28 object-contain ml-4 rounded-lg bg-gray-100 p-1"
         />
         {/* Driver & Car Details */}
         <div className="ml-4 flex flex-col flex-1">
-          <span className="font-bold text-lg text-gray-800">SANTH</span>
-          <span className="font-semibold text-base tracking-wider text-gray-700">KA15AK00-0</span>
+          <span className="font-bold text-lg text-gray-800">{props.rideConfirm.captain.fullname.firstname + " " + props.rideConfirm.captain.fullname.lastname}</span>
+          <span className="font-semibold text-base tracking-wider text-gray-700">{props.rideConfirm.captain.vehicle.plate}</span>
         </div>
       </div>
 
       {/* Car Model & Rating */}
       <div className="flex flex-col items-center mb-4">
-        <span className="text-gray-700 font-medium">White Suzuki S-Presso LXI</span>
+        <span className="text-gray-700 font-medium">{props.rideConfirm.captain.vehicle.color + " " + props.rideConfirm.captain.vehicle.vehicleType}</span>
         <span className="flex items-center text-yellow-500 font-semibold text-base mt-1">
           <i className="ri-star-fill mr-1"></i> 4.9
         </span>
+        <h1 className='text-lg'>Otp:{props.rideConfirm?.otp} </h1>
       </div>
 
       {/* Message Box */}
@@ -65,7 +89,7 @@ const WaitingForDriver = () => {
         <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3">
           <i className="ri-map-pin-2-fill text-green-600 text-xl mr-3"></i>
           <span className="text-gray-800 font-medium text-sm">
-            562/11-A, Kaikondrahalli, Bengaluru, Karnataka
+            {props.rideConfirm.pickup}
           </span>
         </div>
       </div>

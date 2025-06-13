@@ -7,8 +7,9 @@ import ConfirmRide from '../components/ConfirmRide';
 import LookingForDriver from '../components/LookingForDriver';
 import {SocketContext} from '../context/SocketContext';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {UserDataContext} from '../context/UserContext';
-// import WaitingForDriver from '../components/WaitingForDriver';
+import WaitingForDriver from '../components/WaitingForDriver';
 
 const vehicles = [
   {
@@ -35,6 +36,7 @@ const vehicles = [
 ];
 
 function Home() {
+  const navigate=useNavigate();
   const panelRef = useRef(null);
   const panelCloseRef = useRef(null);
   const [panelOpen, setpanelOpen] = useState(false);
@@ -45,6 +47,9 @@ function Home() {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const vehiclePanelRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
+  const waitingForDriverRef = useRef(null)
+  const [rideConfirm, setRideConfirm]=useState(null)
+  const [ waitingForDriver, setWaitingForDriver ] = useState(false)
   const [activeInput, setActiveInput] = useState(null); // 'pickup' or 'dropoff'
   const [lookingForDriver, setLookingForDriver] = useState(false);
   const [suggestions, setSuggestions] = useState([]); // State for suggestions
@@ -104,8 +109,22 @@ function Home() {
     }
   }, [confirmedRide]);
 
+  //animate for Waiting for driver
+
+   useGSAP(function () {
+        if (waitingForDriver) {
+            gsap.to(waitingForDriverRef.current, {
+                transform: 'translateY(0)'
+            })
+        } else {
+            gsap.to(waitingForDriverRef.current, {
+                transform: 'translateY(100%)'
+            })
+        }
+    }, [ waitingForDriver ])
+
   useEffect(() => {
-    console.log('User data:', user);
+    
     socket.emit('join', { role: 'user',userId: user._id}); // Send join message with userId
   }, [user]);
 
@@ -124,7 +143,7 @@ function Home() {
       setSuggestions([]);
       return;
     }
-      const response = await axios.get('http://localhost:4000/maps/get-suggestions', {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
         params: {
           input: input  // Replace `userInput` with your actual input variable
         },
@@ -167,12 +186,19 @@ function Home() {
   };
 
   socket.on('ride-confirmed', (data) => {
-    console.log('Ride confirmed:', data);
-    setLookingForDriver(true);
-    setVehiclePanelOpen(false);
+    //console.log('Ride confirmed:', data);
+    setRideConfirm(data)
+    setLookingForDriver(false);
+    setWaitingForDriver(true);
     
     // Handle ride confirmation (e.g., show success message)
   });
+
+  socket.on('ride-started', (data) => {
+    console.log('Ride started:', data);
+    navigate('/riding')
+
+    });
 
 
   // Form submit: open vehicle panel
@@ -227,11 +253,8 @@ function Home() {
   const handleBackToHome = () => {
     
     setConfirmedRide(false);
-    setVehiclePanelOpen(false);
-    setpanelOpen(false);
-    setSelectedVehicle(null);
-    setpickupLocation('');
-    setdropoffLocation('');
+    setVehiclePanelOpen(true);
+    
     setSuggestions([]);
   };
 
@@ -245,15 +268,19 @@ const handleConfirmRide = () => {
   
   const handleFinalConfirmRide = async() => {
     const token=localStorage.getItem('token');
-    const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/rides/create`,{
+    const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/rides/create`,
+      {
       pickup:pickupLocation,
       destination:dropoffLocation,
       vehicleType:vehicles[selectedVehicle].type,
+      },
+      {
        headers: {
           Authorization:`Bearer ${token}`  // Use token from localStorage
         },
-    })
-    console.log(response)
+      }
+    )
+    
     setLookingForDriver(true);
     setConfirmedRide(false);
   };
@@ -365,7 +392,11 @@ const handleConfirmRide = () => {
   fare={fare}
 />
 
+{waitingForDriver && <WaitingForDriver ref={waitingForDriverRef} rideConfirm={rideConfirm} waitingForDriver={waitingForDriver} setWaitingForDriver={setWaitingForDriver} selectedVehicle={selectedVehicle}  />}
+
     </div>
+
+
   );
 }
 

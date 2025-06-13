@@ -1,6 +1,7 @@
 import React from 'react';
 
 const RidePopUp = (props) => {
+  
   return (
     
         <div className="w-full h-full  py-4 max-w-md border border-gray-300 rounded-xl bg-gray-50 flex flex-col justify-center items-center ">

@@ -108,3 +108,26 @@ module.exports.confirmRide = async (req, res) => {
     }
 };
 
+
+module.exports.rideStart=async(req,res)=>{
+     const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { rideId,otp } = req.query;
+    
+    try{
+        const ride=await rideService.startRide({rideId:rideId,captain:req.captain,otp:otp})
+        sendMessageToSocketId(ride.user.socketId,{
+            event:'ride-started',
+            data:ride
+        })
+
+        return res.status(200).json(ride)
+
+    }catch(err){
+        return res.status(500).json({ error: "Failed to start ride" });
+    }
+}
+
