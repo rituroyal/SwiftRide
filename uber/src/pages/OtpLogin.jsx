@@ -17,7 +17,7 @@ const OtpLogin = () => {
   const sendOtp = async () => {
     try {
       const res = await axios.post(
-        'http://localhost:4000/users/send-otp',
+        'http://localhost:4000/api/auth/send-otp',
         { phone },
         { withCredentials: true }
       );
@@ -31,8 +31,8 @@ const OtpLogin = () => {
   const verifyOtp = async () => {
     try {
       const res = await axios.post(
-        'http://localhost:4000/users/verify-otp',
-        { phone, otp },
+        'http://localhost:4000/api/auth/verify-otp',
+        {  phone, code: otp  },
         { withCredentials: true }
       );
       setUser(res.data.user);

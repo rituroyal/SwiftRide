@@ -14,9 +14,9 @@ const OtpVerify = () => {
 
   const verifyOtp = async () => {
     try {
-      const response = await axios.post('http://localhost:4000/users/verify-otp', {
+      const response = await axios.post('http://localhost:4000/users/api/auth/verify-otp', {
         phone,
-        otp,
+        code: otp,
       }, {
         withCredentials: true
       })
