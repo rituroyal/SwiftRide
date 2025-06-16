@@ -57,6 +57,13 @@ function Home() {
   const {socket} = useContext(SocketContext); // Use SocketContext to get sendMessage and socket
   const {user} = useContext(UserDataContext); // Get userId from UserContext
   // Animate location panel
+
+  useEffect(() => {
+    const ride = localStorage.getItem('currentRide');
+    if (ride) {
+      navigate('/riding'); 
+    }
+  }, []);
   useGSAP(() => {
     gsap.to(panelRef.current, {
       height: panelOpen ? "62%" : "0%",
@@ -196,6 +203,7 @@ function Home() {
 
   socket.on('ride-started', (data) => {
     console.log('Ride started:', data);
+    localStorage.setItem('currentRide', JSON.stringify(data));
     navigate('/riding')
 
     });

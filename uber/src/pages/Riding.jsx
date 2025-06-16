@@ -15,7 +15,7 @@ const Riding = () => {
     <div className="h-screen w-full flex flex-col">
           {/* Home Button */}
       <Link to ='/home' className='fixed top-4 left-4 z-40 h-10 w-10 bg-white flex items-center justify-center rounded-full shadow'>
-        <i className='ri-home-5-line text-2xl text-gray-800'></i>  
+        <i className='ri-home-5-line text-2xl text-gray-800'></i>
       </Link>
           
       {/* Top Section: Background Image */}
@@ -73,3 +73,5 @@ const Riding = () => {
 }
 
 export default Riding
+
+

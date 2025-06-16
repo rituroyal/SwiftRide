@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const rideService = require('../services/ride.service');
 const mapService = require('../services/map.service');
-const {sendMessage}=require("../socket.js");
+const {sendMessage, sendMessageToSocketId}=require("../socket.js");
 const rideModel = require('../models/ride.model.js');
 module.exports.createRide = async (req, res) => {
 
@@ -109,25 +109,61 @@ module.exports.confirmRide = async (req, res) => {
 };
 
 
-module.exports.rideStart=async(req,res)=>{
-     const errors = validationResult(req);
+// module.exports.rideStart=async(req,res)=>{
+//      const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return res.status(400).json({ errors: errors.array() });
+//     }
+
+//     const { rideId,otp } = req.query;
+    
+//     try {
+//         console.log("➡️ rideStart called");
+//     console.log("👉 Captain from req:", req.captain);
+//     console.log("👉 OTP received:", otp);
+//     console.log("👉 Ride ID:", rideId);
+
+//         const ride = await rideService.startRide({ rideId: rideId, captain: req.captain, otp: otp })
+//         console.log('Sending ride-started event to user socket:', ride.user.socketId);
+//         sendMessageToSocketId(ride.user.socketId,{
+//             event:'ride-started',
+//             data:ride
+//         })
+
+//         return res.status(200).json(ride)
+
+//     }catch(err){
+//         return res.status(500).json({ error: "Failed to start ride" });
+//     }
+// }
+
+
+module.exports.rideStart = async (req, res) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { rideId,otp } = req.query;
-    
-    try{
-        const ride=await rideService.startRide({rideId:rideId,captain:req.captain,otp:otp})
-        sendMessageToSocketId(ride.user.socketId,{
-            event:'ride-started',
-            data:ride
-        })
+    const { rideId, otp } = req.query;
 
-        return res.status(200).json(ride)
+    try {
+       
+        const ride = await rideService.startRide(rideId, req.captain, otp);
 
-    }catch(err){
+
+        if (!ride) {
+            return res.status(404).json({ error: "Ride not found or OTP mismatch" });
+        }
+
+        sendMessage(ride.user.socketId, {
+            event: 'ride-started',
+            data: ride
+        });
+
+        return res.status(200).json(ride);
+
+    } catch (err) {
+        console.error("❌ Error in rideStart:", err);
         return res.status(500).json({ error: "Failed to start ride" });
     }
-}
-
+};

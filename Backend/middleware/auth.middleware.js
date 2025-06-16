@@ -43,11 +43,11 @@ module.exports.isUserAuth = async (req, res, next) => {
         }
         console.log("User found:", user);
         req.user = user;
-        
+        next();
     } catch (error) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
-    next();
+    
 }
 
 module.exports.isCaptainAuth = async (req, res, next) => {
@@ -59,11 +59,12 @@ module.exports.isCaptainAuth = async (req, res, next) => {
             return res.status(401).json({ error: 'Captain not found' });
         }
         req.captain = Captain
+        next();
     }
     catch (error) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
-    next();
+    
 }
 
 

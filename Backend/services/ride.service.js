@@ -2,7 +2,7 @@
 const rideModel = require('../models/ride.model');
 const { sendMessage } = require('../socket');
 const { getAddressCoordinate, getDistanceAndTime } = require('./map.service');
-
+const mongoose = require('mongoose');
 const crypto = require("crypto");
 
 function generateOtp(num = 4) {
@@ -88,37 +88,48 @@ module.exports.confirmRide=async(rideId, captainId)=> {
 }
 
 
-module.exports.startRide=async(rideId,captain,otp)=>{
-    // if(!rideId || !otp){
-    //     throw new Error('Ride Id and OTP is required')
-    // }
-    const ride=await rideModel.findOne({
-        _id:rideId,
 
-    }).populate('user').populate('captain').select("+otp");
 
-    console.log("fghyuygtvf",ride)
 
-    if(!ride){
+
+
+module.exports.startRide = async (rideId, captain, otp) => {
+    if (!rideId || !otp) {
+        throw new Error('Ride ID and OTP are required');
+    }
+
+    // ✅ Validate rideId is a proper MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(rideId)) {
+        throw new Error('Invalid Ride ID format');
+    }
+
+    const ride = await rideModel.findOne({
+        _id: rideId,
+        captain: captain._id
+    }).populate('user').populate('captain').select('+otp');
+
+    console.log("Ride found:", ride);
+
+    if (!ride) {
         throw new Error('Ride Not Found');
     }
-    if(ride.status!=='accepted'){
-        throw new Error('Ride not Accepted')
-    }
-    if(ride.otp!==otp){
-        throw new Error('Invalid Otp');
+
+    if (ride.status !== 'accepted') {
+        throw new Error('Ride not accepted');
     }
 
-    await rideModel.findOneAndUpdate({
-        _id:rideId
-    },{
-        status:'ongoing'
-    })
+    if (ride.otp !== otp) {
+        throw new Error('Invalid OTP');
+    }
 
-    sendMessage(ride.user.socketId,{
-        event:'ride-started',
-        data:ride
-    })
+    ride.status = 'ongoing';
+    await ride.save();
+
+    // ✅ Send socket message to user
+    sendMessage(ride.user.socketId, {
+        event: 'ride-started',
+        data: ride
+    });
+
     return ride;
-
-}
+};
