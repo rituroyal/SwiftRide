@@ -58,12 +58,6 @@ function Home() {
   const {user} = useContext(UserDataContext); // Get userId from UserContext
   // Animate location panel
 
-  useEffect(() => {
-    const ride = localStorage.getItem('currentRide');
-    if (ride) {
-      navigate('/riding'); 
-    }
-  }, []);
   useGSAP(() => {
     gsap.to(panelRef.current, {
       height: panelOpen ? "62%" : "0%",
