@@ -39,12 +39,11 @@ function App() {
         <Route path='/captain-home' element={
           <CaptainProtectWrapper><CaptainHome /></CaptainProtectWrapper>
         } />
-        {/* Add more routes as needed */}
-      </Routes>
-      <Routes>
+
         <Route path='/captain-riding' element={
           <CaptainProtectWrapper><CaptainRiding /></CaptainProtectWrapper>
         } />
+        {/* Add more routes as needed */}
       </Routes>
     </div>
   )

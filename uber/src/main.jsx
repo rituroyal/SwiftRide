@@ -12,6 +12,7 @@ createRoot(document.getElementById('root')).render(
     <SocketProvider>
       <CaptainContext>
         <UserContext>
+          
           <BrowserRouter>
             <App/>
           </BrowserRouter>

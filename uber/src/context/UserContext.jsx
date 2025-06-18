@@ -4,6 +4,8 @@ import axios from 'axios'
 
 export const UserDataContext = createContext()
 
+
+
 const UserContext = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -12,7 +14,7 @@ const UserContext = ({ children }) => {
     const fetchUser = async () => {
       try {
         const res = await axios.get('http://localhost:4000/users/profile', {
-          withCredentials: true // ✅ IMPORTANT: Send token cookie
+          withCredentials: true // Ensure cookies are sent with the request
         })
         setUser(res.data)
       } catch (err) {

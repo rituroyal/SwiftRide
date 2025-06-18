@@ -55,7 +55,9 @@ function Home() {
   const [suggestions, setSuggestions] = useState([]); // State for suggestions
   const [fare, setFare] = useState({}); // State for fare calculation
   const {socket} = useContext(SocketContext); // Use SocketContext to get sendMessage and socket
-  const {user} = useContext(UserDataContext); // Get userId from UserContext
+  const { user } = useContext(UserDataContext); // Get userId from UserContext
+  const lookingForDriverRef = useRef(null);
+
   // Animate location panel
 
   useGSAP(() => {
@@ -109,6 +111,24 @@ function Home() {
       });
     }
   }, [confirmedRide]);
+
+  useGSAP(() => {
+    if (!lookingForDriverRef.current) return;
+    if (lookingForDriver) {
+      gsap.to(lookingForDriverRef.current, {
+        transform: 'translateY(0)',
+        duration: 0.4,
+        ease: 'power2.inOut'
+      });
+    } else {
+      gsap.to(lookingForDriverRef.current, {
+        transform: 'translateY(100%)',
+        duration: 0.4,
+        ease: 'power2.inOut'
+      });
+    }
+  }, [lookingForDriver]);
+  
 
   //animate for Waiting for driver
 
@@ -374,7 +394,8 @@ const handleConfirmRide = () => {
       />
 
 {lookingForDriver && (
-      <LookingForDriver
+        <LookingForDriver
+        ref={lookingForDriverRef} 
         selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
         pickupLocation={pickupLocation}
           dropoffLocation={dropoffLocation}

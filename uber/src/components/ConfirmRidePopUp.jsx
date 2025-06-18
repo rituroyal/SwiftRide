@@ -23,7 +23,25 @@ function ConfirmRidePopUp(props) {
       },
     )
 
-    if(res.status===200){
+      if (res.status === 200) {
+      
+        
+        const user = props.confirmRideData?.user || {};
+const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname || ''}`.trim();
+        localStorage.setItem(
+          'currentRide',
+          JSON.stringify({
+            user: {
+              name: fullName || 'Passenger',
+              image: user.image || 'https://via.placeholder.com/150',
+            },
+            pickupLocation: props.confirmRideData?.pickup || 'Not available',
+            dropoffLocation: props.confirmRideData?.destination || 'Not available',
+            estimatedFare: props.confirmRideData?.fare?.toString() || '0',
+          })
+        );
+        
+
       props.setConfirmRidePopPanel(false)
       navigate('/captain-riding');
 
