@@ -206,21 +206,35 @@ function Home() {
     setpanelOpen(false); // Close the suggestion panel
   };
 
-  socket.on('ride-confirmed', (data) => {
-    //console.log('Ride confirmed:', data);
-    setRideConfirm(data)
-    setLookingForDriver(false);
-    setWaitingForDriver(true);
-    
-    // Handle ride confirmation (e.g., show success message)
-  });
+  
 
-  socket.on('ride-started', (data) => {
-    console.log('Ride started:', data);
-    localStorage.setItem('currentRide', JSON.stringify(data));
-    navigate('/riding')
-
+  useEffect(() => {
+    if (!socket || !user?._id) return;
+  
+    socket.emit('join', { role: 'user', userId: user._id });
+  
+    socket.on('ride-confirmed', (data) => {
+      console.log('Ride confirmed:', data);
+      setRideConfirm(data);
+      setLookingForDriver(false);
+      setWaitingForDriver(true);
     });
+  
+    socket.on('ride-started', (data) => {
+      console.log('Ride started:', data);
+      localStorage.setItem('currentRide', JSON.stringify(data));
+      navigate('/riding');
+     
+    });
+  
+    // Clean up socket listeners to prevent duplicates
+    return () => {
+      socket.off('ride-confirmed');
+      socket.off('ride-started');
+    };
+  
+  }, [socket, user]);
+  
 
 
   // Form submit: open vehicle panel
@@ -288,23 +302,36 @@ const handleConfirmRide = () => {
   setConfirmedRide(true);
   };
   
-  const handleFinalConfirmRide = async() => {
-    const token=localStorage.getItem('token');
-    const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/rides/create`,
-      {
-      pickup:pickupLocation,
-      destination:dropoffLocation,
-      vehicleType:vehicles[selectedVehicle].type,
-      },
-      {
-       headers: {
-          Authorization:`Bearer ${token}`  // Use token from localStorage
+  
+  const handleFinalConfirmRide = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/rides/create`,
+        {
+          pickup: pickupLocation,
+          destination: dropoffLocation,
+          vehicleType: vehicles[selectedVehicle].type,
         },
-      }
-    )
-    
-    setLookingForDriver(true);
-    setConfirmedRide(false);
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      // 1. Hide confirm panel
+      setConfirmedRide(false);
+  
+      // 2. Show LookingForDriver screen
+      setLookingForDriver(true);
+  
+      // 3. RideCreatedSuccessfully
+      console.log("Ride created:", response.data);
+  
+    } catch (error) {
+      console.error("Error confirming ride:", error);
+      alert("Could not confirm ride. Try again.");
+    }
   };
   
 

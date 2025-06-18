@@ -16,7 +16,7 @@ const RidePopUp = (props) => {
                 alt="Ride Image"
                 className="h-20 w-20 object-contain rounded-full bg-gray-100 p-1 shadow-lg mb-4"
               />
-              <p className="text-gray-600 font-bold italic mb-2">{props.rideData?.user?.fullname?.firstname + " "} {props.rideData?.user?.fullname?.lastname}</p>
+              <p className="text-gray-600 font-bold italic mb-2">{props.rideData?.user?.firstname + " " + props.rideData?.user?.lastname}</p>
             </div>
             <div>
               <div className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'>{props.rideData?.pickup} </p></div>

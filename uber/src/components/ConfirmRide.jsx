@@ -1,12 +1,16 @@
 
 
 import React, { forwardRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 const ConfirmRide = forwardRef(
   (
     { open, selectedVehicle, pickupLocation, dropoffLocation, onBackToHome, onConfirm, fare },
     ref
   ) => {
+
+    const navigate = useNavigate();
     if (!open)
       return (
         <div
@@ -20,6 +24,19 @@ const ConfirmRide = forwardRef(
       selectedVehicle && fare[selectedVehicle.type]
         ? `Rs ${fare[selectedVehicle.type]}`
         : selectedVehicle?.price || 'Rs0';
+    
+       
+    
+    const handleConfirm = () => {
+      // Don't navigate directly here
+      onConfirm({
+        pickupLocation,
+        dropoffLocation,
+        fare: fare[selectedVehicle.type],
+        vehicle: selectedVehicle,
+      });
+    };
+    
 
     return (
       <div
@@ -27,7 +44,7 @@ const ConfirmRide = forwardRef(
         className="absolute bottom-0 left-0 w-full bg-white z-30 p-6 flex flex-col items-center justify-between min-h-[60vh] rounded-t-2xl shadow-lg"
         style={{ transform: 'translateY(0)', transition: 'transform 0.4s' }}
       >
-        {/* Title like Uber */}
+       
         <h3 className="text-2xl font-bold mb-4 text-center">Confirm your ride</h3>
 
         {/* Ride Details */}
@@ -72,12 +89,21 @@ const ConfirmRide = forwardRef(
         {/* Confirm + Back Button */}
         <div className="w-full mb-5 flex justify-center mt-auto">
           <div className="w-full max-w-md flex flex-col gap-3">
-            <button
+            {/* <button
               className="bg-green-600 text-white py-3 rounded-md font-semibold text-lg"
               onClick={onConfirm}
+              
             >
               Confirm Ride
-            </button>
+            </button> */}
+
+<button
+  className="bg-green-600 text-white py-3 rounded-md font-semibold text-lg"
+  onClick={handleConfirm}   // ✅ this will trigger navigate()
+>
+  Confirm Ride
+</button>
+
             <button
               className="bg-gray-800 text-white py-3 rounded-md font-semibold text-lg"
               onClick={onBackToHome}

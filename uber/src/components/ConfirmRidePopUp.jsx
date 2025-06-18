@@ -28,6 +28,8 @@ function ConfirmRidePopUp(props) {
         
         const user = props.confirmRideData?.user || {};
 const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname || ''}`.trim();
+        
+
         localStorage.setItem(
           'currentRide',
           JSON.stringify({
@@ -35,15 +37,41 @@ const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname ||
               name: fullName || 'Passenger',
               image: user.image || 'https://via.placeholder.com/150',
             },
-            pickupLocation: props.confirmRideData?.pickup || 'Not available',
-            dropoffLocation: props.confirmRideData?.destination || 'Not available',
-            estimatedFare: props.confirmRideData?.fare?.toString() || '0',
+            pickup: props.confirmRideData?.pickup || 'Not available',
+            destination: props.confirmRideData?.destination || 'Not available',
+            fare: props.confirmRideData?.fare?.toString() || '0',
+            vehicle: props.confirmRideData?.vehicle || {
+              img: '/image/car1.jpg',
+              type: 'Car',
+              people: 4
+            }
           })
         );
         
 
+       
+        
+
       props.setConfirmRidePopPanel(false)
-      navigate('/captain-riding');
+        // navigate('/captain-riding');
+        
+        // setTimeout(() => {
+        //   navigate('/captain-riding');
+        // }, 100);
+
+        navigate('/captain-riding', {
+          state: {
+            user: {
+              name: fullName || 'Passenger',
+              image: user.image || 'https://via.placeholder.com/150',
+            },
+            pickupLocation: props.confirmRideData?.pickup || 'Not available',
+            dropoffLocation: props.confirmRideData?.destination || 'Not available',
+            estimatedFare: props.confirmRideData?.fare?.toString() || '0',
+          },
+        });
+        
+        
 
     }
 
