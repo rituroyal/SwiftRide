@@ -1,22 +1,40 @@
 
 
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { SocketContext } from '../context/SocketContext'; // ✅ Make sure this path is correct
 
 const Riding = () => {
   const [rideData, setRideData] = useState(null);
-
-  
+  const { socket } = useContext(SocketContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const ride = localStorage.getItem('currentRide');
     if (ride) {
       const parsed = JSON.parse(ride);
-      console.log("Ride data from localStorage:", parsed); // 🔍
+      console.log("🚕 Ride data from localStorage:", parsed);
       setRideData(parsed);
     }
   }, []);
-  
+
+  // ✅ Socket listener for ride end
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleRideEnd = () => {
+      console.log("📢 Ride ended by captain, redirecting to /home");
+      localStorage.removeItem('currentRide');
+      navigate('/home');
+    };
+
+    socket.on('ride-ended', handleRideEnd);
+
+    return () => {
+      socket.off('ride-ended', handleRideEnd);
+    };
+  }, [socket, navigate]);
+
   if (!rideData) return <div>Loading...</div>;
 
   return (
@@ -29,17 +47,17 @@ const Riding = () => {
       <div className="h-[50vh] w-full flex-shrink-0">
         <img
           src="https://t3.ftcdn.net/jpg/07/28/30/26/240_F_728302620_Xddnf5Cl0K1ACZurd6yByUzHiHMMIoe6.jpg"
-          alt="RideUrWay"
+          alt="Map"
           className="w-full h-full object-cover"
         />
       </div>
 
-      {/* Bottom Section */}
+      {/* Bottom Ride Info */}
       <div className="h-[50vh] w-full bg-white z-30 p-6 flex flex-col items-center rounded-t-2xl shadow-lg">
         <div className="flex flex-col items-center w-full max-w-md mb-4">
           <img
             src={rideData.vehicle?.img || '/image/car1.jpg'}
-            alt="Car"
+            alt="Vehicle"
             className="h-20 w-36 object-contain rounded-full bg-gray-100 p-1 shadow-lg mx-auto"
           />
         </div>
@@ -76,3 +94,4 @@ const Riding = () => {
 };
 
 export default Riding;
+

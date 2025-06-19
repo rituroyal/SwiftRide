@@ -27,7 +27,8 @@ function CaptionLogin() {
           if(response.data){
           updateCaptain(response.data.captain)
 
-          localStorage.setItem('token', response.data.token) // Store the token in localStorage
+            localStorage.setItem('token', response.data.token) // Store the token in localStorage
+            localStorage.setItem('isCaptain', 'true');
           }
           setEmail('')
           setPassword('')

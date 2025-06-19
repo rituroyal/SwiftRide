@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+router.use(express.json());
 const { body,query } = require('express-validator');
 const rideController = require('../controller/ride.controller');
 const authMiddleware = require('../middleware/auth.middleware');
@@ -67,6 +68,12 @@ router.get('/start-ride',authMiddleware.isAuth,authMiddleware.isCaptainAuth,
 
 )
 
+
+router.post('/end', (req, res, next) => {
+    console.log(" /end route hit");
+    next();
+  }, rideController.endRide);
+  
 
 
 module.exports = router;

@@ -12,8 +12,16 @@ function CaptainRiding() {
   const FinishRideRef = useRef(null);
 
   useEffect(() => {
+    // const ride = JSON.parse(localStorage.getItem('currentRide'));
+    // if (ride) setRideInfo(ride);
     const ride = JSON.parse(localStorage.getItem('currentRide'));
-    if (ride) setRideInfo(ride);
+if (ride && ride._id) {
+  setRideInfo(ride);
+} else {
+  // 🛠 Fetch or construct ride data from the backend if needed.
+  console.warn("❌ ride._id is missing in localStorage:", ride);
+}
+
   }, []);
 
   useGSAP(() => {
@@ -65,7 +73,13 @@ function CaptainRiding() {
         ref={FinishRideRef}
         className="flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30 flex flex-col items-center rounded-t-2xl shadow-lg"
       >
-        <FinishRide setFinishRide={setFinishRide} rideInfo={rideInfo} />
+        {/* <FinishRide setFinishRide={setFinishRide} rideInfo={rideInfo} /> */}
+        <FinishRide
+  setFinishRide={setFinishRide}
+  rideInfo={rideInfo}
+  setRidePopupPanel={() => {}} // ✅ Add this empty function to avoid error
+/>
+
       </div>
     </div>
   );

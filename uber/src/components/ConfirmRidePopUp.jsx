@@ -30,9 +30,13 @@ function ConfirmRidePopUp(props) {
 const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname || ''}`.trim();
         
 
+        
+
+
         localStorage.setItem(
           'currentRide',
           JSON.stringify({
+            _id: props.confirmRideData?._id, // ✅ ADD _id here!
             user: {
               name: fullName || 'Passenger',
               image: user.image || 'https://via.placeholder.com/150',
@@ -48,16 +52,13 @@ const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname ||
           })
         );
         
+        
 
        
         
 
       props.setConfirmRidePopPanel(false)
-        // navigate('/captain-riding');
         
-        // setTimeout(() => {
-        //   navigate('/captain-riding');
-        // }, 100);
 
         navigate('/captain-riding', {
           state: {

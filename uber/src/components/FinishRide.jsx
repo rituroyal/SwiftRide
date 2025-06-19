@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function FinishRide(props) {
   const [ride, setRide] = useState(null);
@@ -14,58 +15,85 @@ function FinishRide(props) {
       setRide(props.rideInfo);
     }
   }, [props.rideInfo]);
-  
 
-  const handleFinish = () => {
-    localStorage.removeItem('currentRide');
-    navigate('/home');
-  };
+  async function endRide() {
+    if (!ride?._id) {
+      console.warn("⛔ ride._id is undefined. Ride:", ride);
+      return;
+    }
+
+    try {
+      console.log("✅ Sending rideId to backend:", ride._id);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/rides/end`,
+        { rideId: ride._id },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        props.setFinishRide(false);
+        props.setRidePopupPanel(false);
+        localStorage.removeItem('currentRide');
+
+        const isCaptain = localStorage.getItem('isCaptain');
+        if (isCaptain === 'true') {
+          localStorage.removeItem('isCaptain');
+          navigate('/captain-login');
+        } else {
+          navigate('/home');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error finishing ride:', error?.response || error.message);
+    }
+  }
 
   if (!ride) return <div className="text-center mt-10">Loading ride info...</div>;
 
   return (
     <div className="w-full h-screen overflow-hidden justify-center border border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center">
       <div className='w-full px-4 py-2 relative flex justify-between items-center'>
-        <h5 onClick={() => props.setFinishRide(false)} className='absolute right-6 top-[-2] text-2xl '>
+        <h5 onClick={() => props.setFinishRide(false)} className='absolute right-6 top-[-2] text-2xl cursor-pointer'>
           <i className='ri-arrow-down-wide-line'></i>
         </h5>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Finish This Ride </h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Finish This Ride</h2>
       </div>
 
-      <div className='flex items-center gap-3 '>
+      <div className='flex items-center gap-3'>
         <img
           src={ride?.user?.image}
           alt="User"
           className="h-20 w-20 object-contain rounded-full bg-gray-100 p-1 shadow-lg mb-4"
         />
-
-
-
         <p className="text-gray-600 font-bold italic mb-2">{ride?.user?.name}</p>
       </div>
 
       <div>
         <div className="text-gray-600 font-semibold mb-2">
-  Pickup Location:
-          
+          Pickup Location:
           <div className="text-base">{ride?.pickup}</div>
-</div>
+        </div>
 
-        <p className="text-gray-600 font-semibold mb-2">
+        <div className="text-gray-600 font-semibold mb-2">
           Dropoff Location:
-          
-          <p className='text-base'>{ride?.destination}</p>
-        </p>
-        <p className="text-gray-600 font-semibold mb-4">
+          <div className='text-base'>{ride?.destination}</div>
+        </div>
+
+        <div className="text-gray-600 font-semibold mb-4">
           Estimated Fare:
-         
-          <p className='text-base'>₹{ride?.fare}</p>
-        </p>
+          <div className='text-base'>₹{ride?.fare}</div>
+        </div>
       </div>
 
       <div className='flex flex-col w-full px-4'>
         <button
-          onClick={handleFinish}
+          onClick={endRide}
           className="bg-green-500 flex items-center justify-center text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3"
         >
           Finish Ride
@@ -76,5 +104,3 @@ function FinishRide(props) {
 }
 
 export default FinishRide;
-
-

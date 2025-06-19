@@ -24,6 +24,8 @@ function App() {
         <Route path='/riding' element={<Riding />} />
         <Route path='/signup' element={<UserSignup/>} />
         <Route path='/CaptainLogin' element={<CaptionLogin/>} />
+        <Route path='/captain-login' element={<CaptionLogin/>} />
+
         <Route path='/CaptainSignup' element={<CaptainSignup />} />
         <Route path="/otp-login" element={<OtpLogin />} />
         <Route path='/home' element={

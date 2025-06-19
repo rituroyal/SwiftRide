@@ -109,33 +109,9 @@ module.exports.confirmRide = async (req, res) => {
 };
 
 
-// module.exports.rideStart=async(req,res)=>{
-//      const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(400).json({ errors: errors.array() });
-//     }
 
-//     const { rideId,otp } = req.query;
-    
-//     try {
-//         console.log("➡️ rideStart called");
-//     console.log("👉 Captain from req:", req.captain);
-//     console.log("👉 OTP received:", otp);
-//     console.log("👉 Ride ID:", rideId);
 
-//         const ride = await rideService.startRide({ rideId: rideId, captain: req.captain, otp: otp })
-//         console.log('Sending ride-started event to user socket:', ride.user.socketId);
-//         sendMessageToSocketId(ride.user.socketId,{
-//             event:'ride-started',
-//             data:ride
-//         })
 
-//         return res.status(200).json(ride)
-
-//     }catch(err){
-//         return res.status(500).json({ error: "Failed to start ride" });
-//     }
-// }
 
 
 module.exports.rideStart = async (req, res) => {
@@ -167,3 +143,34 @@ module.exports.rideStart = async (req, res) => {
         return res.status(500).json({ error: "Failed to start ride" });
     }
 };
+
+
+// Finish the ride
+module.exports.endRide = async (req, res) => {
+    const { rideId } = req.body;
+    console.log("🎯 rideId received in endRide:", rideId);
+    try {
+      const ride = await rideModel.findById(rideId);
+  
+        if (!ride) {
+            console.log("❌ Ride not found in DB");
+        return res.status(404).json({ error: "Ride not found" });
+      }
+  
+      // Mark ride as completed
+      ride.status = 'completed';
+      await ride.save();
+  
+      // Optional: Notify user and captain if needed via socket
+      sendMessage(ride.user.socketId, {
+        event: 'ride-ended',
+        data: { message: 'Ride completed successfully' }
+      });
+  
+      res.status(200).json({ message: 'Ride ended successfully' });
+    } catch (error) {
+      console.error("❌ Error ending ride:", error);
+      res.status(500).json({ error: "Failed to end ride" });
+    }
+  };
+  
