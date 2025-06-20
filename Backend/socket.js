@@ -31,6 +31,28 @@ function initializeSocket(server) {
       }
     });
 
+    socket.on('user-location-update', async ({ userId, latitude, longitude }) => {
+      console.log(`📡 Received live location from user ${userId}:`, latitude, longitude);
+  
+      try {
+        await user.findByIdAndUpdate(userId, {
+          location: {
+            ltd: latitude,
+            lng: longitude
+          }
+        });
+  
+        io.emit('user-location', { userId, latitude, longitude });
+  
+      } catch (err) {
+        console.error('Error updating user location:', err);
+      }
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('User disconnected:', socket.id);
+    });
+  
     socket.on('updateLocation', async(data) => {
         const { userId, location } = data;
 

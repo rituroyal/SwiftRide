@@ -207,6 +207,7 @@ function Home() {
   };
 
   
+  let locationInterval;
 
   useEffect(() => {
     if (!socket || !user?._id) return;
@@ -219,11 +220,26 @@ function Home() {
       setLookingForDriver(false);
       setWaitingForDriver(true);
     });
-  
+    
     socket.on('ride-started', (data) => {
       console.log('Ride started:', data);
       localStorage.setItem('currentRide', JSON.stringify(data));
       navigate('/riding');
+
+
+      locationInterval = setInterval(() => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            socket.emit('user-location-update', {
+              userId: user._id,
+              latitude,
+              longitude
+            });
+            console.log("📡 Sent live location:", latitude, longitude);
+          });
+        }
+      }, 5000); // every 5 seconds
      
     });
   
@@ -231,7 +247,11 @@ function Home() {
     return () => {
       socket.off('ride-confirmed');
       socket.off('ride-started');
+      if (locationInterval) clearInterval(locationInterval);
+    
     };
+    ;
+  
   
   }, [socket, user]);
   

@@ -6,23 +6,46 @@ import FinishRide from '../components/FinishRide';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 
+import { SocketContext } from '../context/SocketContext';
+import { useContext } from 'react';
+
+
 function CaptainRiding() {
   const [finishRide, setFinishRide] = useState(false);
   const [rideInfo, setRideInfo] = useState(null); // ✅ Corrected
   const FinishRideRef = useRef(null);
+  const [userLocation, setUserLocation] = useState(null);
+
 
   useEffect(() => {
     // const ride = JSON.parse(localStorage.getItem('currentRide'));
     // if (ride) setRideInfo(ride);
     const ride = JSON.parse(localStorage.getItem('currentRide'));
-if (ride && ride._id) {
+    if (ride && ride._id) {
+      console.log(" rideInfo loaded:", ride);
   setRideInfo(ride);
 } else {
   // 🛠 Fetch or construct ride data from the backend if needed.
-  console.warn("❌ ride._id is missing in localStorage:", ride);
+  console.warn(" ride._id is missing in localStorage:", ride);
 }
 
   }, []);
+
+  const { socket } = useContext(SocketContext); // Put this at the top of the component
+
+useEffect(() => {
+  if (!socket || !rideInfo?.user?._id) return;
+
+  socket.on('user-location', (data) => {
+    console.log("📍 User location received:", data);
+    setUserLocation({ latitude: data.latitude, longitude: data.longitude });
+  });
+
+  return () => {
+    socket.off('user-location');
+  };
+}, [socket, rideInfo]);
+
 
   useGSAP(() => {
     if (finishRide) {
@@ -81,6 +104,17 @@ if (ride && ride._id) {
 />
 
       </div>
+
+      {userLocation && (
+        // <div className="absolute top-5 left-5 bg-white p-3 rounded shadow-md z-50">
+        <div className="absolute top-5 left-5 bg-white p-3 rounded shadow-md z-50 border border-red-500">
+
+    <p className="font-semibold text-sm">📍 User Location:</p>
+    <p className="text-xs text-gray-600">Lat: {userLocation.latitude}</p>
+    <p className="text-xs text-gray-600">Lng: {userLocation.longitude}</p>
+  </div>
+)}
+
     </div>
   );
 }
