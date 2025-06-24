@@ -31,24 +31,46 @@ function initializeSocket(server) {
       }
     });
 
-    socket.on('user-location-update', async ({ userId, latitude, longitude }) => {
-      console.log(`📡 Received live location from user ${userId}:`, latitude, longitude);
+    
   
-      try {
-        await user.findByIdAndUpdate(userId, {
-          location: {
-            ltd: latitude,
-            lng: longitude
-          }
-        });
-  
-        io.emit('user-location', { userId, latitude, longitude });
-  
-      } catch (err) {
-        console.error('Error updating user location:', err);
+    const rideModel = require('./models/ride.model');
+
+socket.on('user-location-update', async ({ userId, latitude, longitude }) => {
+  console.log(`📡 Received live location from user ${userId}:`, latitude, longitude);
+
+  try {
+    // Update user's live location
+    await user.findByIdAndUpdate(userId, {
+      location: {
+        ltd: latitude,
+        lng: longitude
       }
     });
-  
+
+    // Get active ride with this user
+    const activeRide = await rideModel.findOne({
+      user: userId,
+      status: 'ongoing'
+    }).populate('captain');
+
+    if (activeRide && activeRide.captain?.socketId) {
+      io.to(activeRide.captain.socketId).emit('user-location', {
+        userId,
+        latitude,
+        longitude
+      });
+      console.log(`📤 Sent location to captain ${activeRide.captain.socketId}`);
+    } else {
+      console.warn(`⚠️ No active ride or captain found for user ${userId}`);
+    }
+
+  } catch (err) {
+    console.error('Error updating user location:', err);
+  }
+});
+
+    
+
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
     });

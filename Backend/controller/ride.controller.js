@@ -20,6 +20,8 @@ module.exports.createRide = async (req, res) => {
             destination,
             vehicleType
         })
+
+        await ride.populate('user');
          res.status(201).json(ride);
 
          const pickupCoord = await mapService.getAddressCoordinate(pickup);
