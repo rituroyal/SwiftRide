@@ -462,7 +462,15 @@ const handleConfirmRide = () => {
   fare={fare}
 />
 
-{waitingForDriver && <WaitingForDriver ref={waitingForDriverRef} rideConfirm={rideConfirm} waitingForDriver={waitingForDriver} setWaitingForDriver={setWaitingForDriver} selectedVehicle={selectedVehicle}  />}
+{waitingForDriver && (
+  <WaitingForDriver
+    ref={waitingForDriverRef}
+    rideConfirm={rideConfirm}
+    waitingForDriver={waitingForDriver}
+    setWaitingForDriver={setWaitingForDriver}
+    selectedVehicle={selectedVehicle !== null ? vehicles[selectedVehicle] : null}
+  />
+)}
 
     </div>
 

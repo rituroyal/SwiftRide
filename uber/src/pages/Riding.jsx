@@ -1,13 +1,21 @@
 
 
+
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { SocketContext } from '../context/SocketContext'; // ✅ Make sure this path is correct
+import { SocketContext } from '../context/SocketContext';
 
 const Riding = () => {
   const [rideData, setRideData] = useState(null);
   const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
+
+  // ✅ Vehicles list to match image
+  const vehicles = [
+    { type: 'car', people: 6, img: '/image/car1.jpg' },
+    { type: 'auto', people: 4, img: '/image/auto.jpg' },
+    { type: 'moto', people: 2, img: '/image/moto.jpg' },
+  ];
 
   useEffect(() => {
     const ride = localStorage.getItem('currentRide');
@@ -18,7 +26,6 @@ const Riding = () => {
     }
   }, []);
 
-  // ✅ Socket listener for ride end
   useEffect(() => {
     if (!socket) return;
 
@@ -36,6 +43,9 @@ const Riding = () => {
   }, [socket, navigate]);
 
   if (!rideData) return <div>Loading...</div>;
+
+  // ✅ Match full vehicle object
+  const matchedVehicle = vehicles.find(v => v.type === rideData.vehicleType);
 
   return (
     <div className="h-screen w-full flex flex-col">
@@ -56,15 +66,15 @@ const Riding = () => {
       <div className="h-[50vh] w-full bg-white z-30 p-6 flex flex-col items-center rounded-t-2xl shadow-lg">
         <div className="flex flex-col items-center w-full max-w-md mb-4">
           <img
-            src={rideData.vehicle?.img || '/image/car1.jpg'}
+            src={matchedVehicle?.img || '/image/car1.jpg'}
             alt="Vehicle"
             className="h-20 w-36 object-contain rounded-full bg-gray-100 p-1 shadow-lg mx-auto"
           />
         </div>
 
         <div className="flex flex-col items-center mb-1">
-          <span className="font-bold text-lg text-gray-800">{rideData.vehicle?.type || 'Vehicle'}</span>
-          <span className="text-gray-700 font-medium">{rideData.vehicle?.people} seats</span>
+          <span className="font-bold text-lg text-gray-800">{matchedVehicle?.type || 'Vehicle'}</span>
+          <span className="text-gray-700 font-medium">{matchedVehicle?.people} seats</span>
           <span className="flex items-center text-yellow-500 font-semibold text-base mt-1">
             <i className="ri-star-fill mr-1"></i> 4.9
           </span>
@@ -94,4 +104,3 @@ const Riding = () => {
 };
 
 export default Riding;
-

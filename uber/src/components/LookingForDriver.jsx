@@ -37,7 +37,7 @@ const LookingForDriver = ({
                 <i className="ri-user-3-fill mr-1"></i>
                 {selectedVehicle.people} seats
               </div>
-              <div className="text-xs text-gray-500">ETA: {selectedVehicle.eta}</div>
+              {/* <div className="text-xs text-gray-500">ETA: {selectedVehicle.eta}</div> */}
             </div>
             <div className="ml-auto font-bold text-lg flex items-center">
               <i className="ri-currency-line mr-1"></i>
@@ -64,18 +64,10 @@ const LookingForDriver = ({
         </div>
       )}
 
-      {/* Back to Home Button */}
-      {/* <div className="w-full mb-5 flex justify-center mt-auto">
-        <button
-          className="w-full max-w-md bg-black text-white py-3 rounded-md font-semibold text-lg"
-          onClick={onBackToHome}
-          style={{ marginBottom: 0 }}
-        >
-          Back to Ride Ur Way
-        </button>
-      </div> */}
+     
     </div>
   );
 };
 
 export default LookingForDriver;
+

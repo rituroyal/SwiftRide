@@ -62,7 +62,7 @@ const ConfirmRide = forwardRef(
                   <i className="ri-user-3-fill mr-1"></i>
                   {selectedVehicle.people} seats
                 </div>
-                <div className="text-xs text-gray-500">ETA: {selectedVehicle.eta}</div>
+                {/* <div className="text-xs text-gray-500">ETA: {selectedVehicle.eta}</div> */}
               </div>
               <div className="ml-auto font-bold text-lg flex items-center">
                 <i className="ri-currency-line mr-1"></i>
