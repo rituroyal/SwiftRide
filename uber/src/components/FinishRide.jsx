@@ -4,10 +4,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import img from '../../images/download.jpeg'
 
 function FinishRide(props) {
   const [ride, setRide] = useState(null);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     if (props.rideInfo) {
@@ -70,9 +72,7 @@ function FinishRide(props) {
         <div className="flex flex-col items-center mb-6">
         <img
   src={
-    ride?.user?.image?.trim()
-      ? ride.user.image
-      : "https://imgs.search.brave.com/cMKPEZRQ94c8cyLIyzjd3ZT8zhTRGMcWw8Gz_Vxf24o/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTQ1/MDI2ODU1OC9waG90/by9zdW1tZXItc2Vs/ZmllLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1JaXZHUUlY/VjdwQ3VfdHIxMEkw/a2FEb3VVdElpX3BL/ek9ycUJfTkFHb0NB/PQ"
+     img // Fallback image if no user image is provided
   }
   alt="User"
   className="h-24 w-24 rounded-full object-cover border-4 border-green-500 shadow-md"

@@ -11,7 +11,7 @@ router.post('/register',
 router.post('/login',[
     body('email').isEmail().withMessage('invalid Email'),
     body('password').isLength({min:6}).withMessage("Password is invalid"),
-    body('otp').isNumeric().withMessage('OTP must be a number')
+   
 ],userController.login)
 
 router.get('/profile', authMiddleware.isAuth,authMiddleware.isUserAuth, userController.profile)
