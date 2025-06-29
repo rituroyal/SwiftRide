@@ -85,22 +85,31 @@ function CaptainRiding() {
         </div>
       </div>
 
-      <div
-        ref={FinishRideRef}
-        className="flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30 flex flex-col items-center rounded-t-2xl shadow-lg"
-      >
-        <FinishRide
-          setFinishRide={setFinishRide}
-          rideInfo={rideInfo}
-          setRidePopupPanel={() => {}}
-        />
-      </div>
+      
+
+{finishRide && (
+  <div
+    ref={FinishRideRef}
+    className="flex-1 absolute bottom-0 py-4 min-h-[50%] w-screen bg-white z-30 flex flex-col items-center rounded-t-2xl shadow-lg"
+  >
+    <FinishRide
+      setFinishRide={setFinishRide}
+      rideInfo={rideInfo}
+      setRidePopupPanel={() => {}}
+    />
+  </div>
+)}
+
 
       {userLocation ? (
         <div className="absolute top-5 left-5 bg-white p-3 rounded shadow-md z-50 border border-red-500">
           <p className="font-semibold text-sm">📍 User Location:</p>
-          <p className="text-xs text-gray-600">Lat: {userLocation.latitude}</p>
-          <p className="text-xs text-gray-600">Lng: {userLocation.longitude}</p>
+          {/* <p className="text-xs text-gray-600">Lat: {userLocation.latitude}</p>
+          <p className="text-xs text-gray-600">Lng: {userLocation.longitude}</p> */}
+
+<p className="text-xs text-gray-600">Lat: {userLocation.latitude.toFixed(2)}</p>
+<p className="text-xs text-gray-600">Lng: {userLocation.longitude.toFixed(2)}</p>
+
         </div>
       ) : (
         <div className="absolute top-5 left-5 bg-white text-red-600 text-xs p-2 rounded shadow z-50 border border-red-500">

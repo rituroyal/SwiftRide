@@ -23,7 +23,6 @@ function FinishRide(props) {
     }
 
     try {
-      console.log("✅ Sending rideId to backend:", ride._id);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/rides/end`,
         { rideId: ride._id },
@@ -57,46 +56,55 @@ function FinishRide(props) {
   if (!ride) return <div className="text-center mt-10">Loading ride info...</div>;
 
   return (
-    <div className="w-full h-screen overflow-hidden justify-center border border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center">
-      <div className='w-full px-4 py-2 relative flex justify-between items-center'>
-        <h5 onClick={() => props.setFinishRide(false)} className='absolute right-6 top-[-2] text-2xl cursor-pointer'>
-          <i className='ri-arrow-down-wide-line'></i>
-        </h5>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Finish This Ride</h2>
-      </div>
+    <div className="w-full h-screen flex items-center justify-center bg-gray-50 px-4 py-6">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-xl p-6 relative">
+        {/* Close Button */}
+        <button onClick={() => props.setFinishRide(false)} className="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700">
+          <i className="ri-close-line"></i>
+        </button>
 
-      <div className='flex items-center gap-3'>
+        {/* Heading */}
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Finish Your Ride</h2>
+
+        {/* Passenger Info */}
+        <div className="flex flex-col items-center mb-6">
         <img
-          src={ride?.user?.image}
-          alt="User"
-          className="h-20 w-20 object-contain rounded-full bg-gray-100 p-1 shadow-lg mb-4"
-        />
-        <p className="text-gray-600 font-bold italic mb-2">{ride?.user?.name}</p>
-      </div>
+  src={
+    ride?.user?.image?.trim()
+      ? ride.user.image
+      : "https://imgs.search.brave.com/cMKPEZRQ94c8cyLIyzjd3ZT8zhTRGMcWw8Gz_Vxf24o/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTQ1/MDI2ODU1OC9waG90/by9zdW1tZXItc2Vs/ZmllLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1JaXZHUUlY/VjdwQ3VfdHIxMEkw/a2FEb3VVdElpX3BL/ek9ycUJfTkFHb0NB/PQ"
+  }
+  alt="User"
+  className="h-24 w-24 rounded-full object-cover border-4 border-green-500 shadow-md"
+/>
 
-      <div>
-        <div className="text-gray-600 font-semibold mb-2">
-          Pickup Location:
-          <div className="text-base">{ride?.pickup}</div>
+          <p className="text-lg font-semibold text-gray-700 mt-3">
+            {ride?.user?.name || "Passenger"}
+          </p>
         </div>
 
-        <div className="text-gray-600 font-semibold mb-2">
-          Dropoff Location:
-          <div className='text-base'>{ride?.destination}</div>
+        {/* Ride Details */}
+        <div className="space-y-4 text-gray-700 text-sm font-medium">
+          <div className="bg-gray-100 rounded-lg px-4 py-3">
+            <p className="text-gray-500 mb-1">Pickup Location</p>
+            <p>{ride?.pickup || "Not Available"}</p>
+          </div>
+          <div className="bg-gray-100 rounded-lg px-4 py-3">
+            <p className="text-gray-500 mb-1">Dropoff Location</p>
+            <p>{ride?.destination || "Not Available"}</p>
+          </div>
+          <div className="bg-gray-100 rounded-lg px-4 py-3">
+            <p className="text-gray-500 mb-1">Fare</p>
+            <p className="text-green-600 font-bold text-lg">₹{ride?.fare || "0"}</p>
+          </div>
         </div>
 
-        <div className="text-gray-600 font-semibold mb-4">
-          Estimated Fare:
-          <div className='text-base'>₹{ride?.fare}</div>
-        </div>
-      </div>
-
-      <div className='flex flex-col w-full px-4'>
+        {/* Finish Button */}
         <button
           onClick={endRide}
-          className="bg-green-500 flex items-center justify-center text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-200 my-3"
+          className="mt-6 bg-green-600 hover:bg-green-700 text-white font-semibold w-full py-3 rounded-lg shadow transition-all flex items-center justify-center gap-2"
         >
-          Finish Ride
+          <i className="ri-check-line text-xl"></i> Finish Ride
         </button>
       </div>
     </div>
