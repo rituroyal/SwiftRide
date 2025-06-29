@@ -55,6 +55,7 @@ function UserLogin(){
         placeholder='Enter Password'/>
         <button
         className='bg-[#111] text-white font-semibold mb-7 rounded px-2 py-2  w-full text-lg placeholder:text-base' >Login</button>
+        
         <p className='text-center'>New here?<NavLink to='/signup' className="text-blue-600">Create new Account</NavLink></p>
       </form>
       </div>
@@ -68,12 +69,7 @@ function UserLogin(){
       
       
       
-      <NavLink
-    to="/otp-login"
-    className="bg-[#007bff] text-white flex justify-center items-center font-semibold rounded px-2 py-2 w-full text-lg hover:bg-[#0056b3] transition"
-  >
-    User Login with Phone OTP
-  </NavLink>
+      
     </div>
   )
 }

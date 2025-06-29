@@ -1,82 +1,85 @@
-const User=require('../models/user.model');
+
+const User=require('../models/user.model.js');
 const userService=require('../services/user.service');
 const {validationResult}=require('express-validator');
 const blacklistTokenModel = require('../models/blacklistToken.model');
-
-const otpModel = require('../models/otp.model');
-
+const validator = require('validator'); // Make sure to install this package
+const otpGenerator = require('otp-generator'); // Make sure to install this package
+const OTP = require('../models/OTP.js'); // Assuming you have an OTP model defined
 
 module.exports.sendOtp = async (req, res) => {
-   const { phone } = req.body;
- 
-   // Basic validation: must be 10 digits
-   const phoneRegex = /^[6-9]\d{9}$/;
- 
-   if (!phone || !phoneRegex.test(phone)) {
-     return res.status(400).json({ error: 'Invalid phone number format' });
-   }
- 
-   // Generate 6-digit OTP
-   const otp = Math.floor(100000 + Math.random() * 900000).toString();
- 
-   // Save OTP
-   await otpModel.findOneAndUpdate(
-     { phone },
-     { otp, expiresAt: Date.now() + 5 * 60 * 1000 },
-     { upsert: true, new: true }
-   );
- 
-   console.log(`OTP for ${phone} is ${otp}`);
- 
-   res.status(200).json({ message: 'OTP sent successfully' });
- };
- 
- 
-module.exports.verifyOtp = async (req, res) => {
-   const { phone, otp } = req.body;
- 
-   const otpRecord = await otpModel.findOne({ phone, otp });
- 
-   if (!otpRecord || otpRecord.expiresAt < Date.now()) {
-     return res.status(400).json({ error: 'Invalid or expired OTP' });
-   }
- 
-   // Check if user already exists with this phone
-   let user = await User.findOne({ phone });
-   if (!user) {
-     // check if user exists by dummy email
-     const email = `${phone}@rideurway.com`;
-     user = await User.findOne({ email });
- 
-     if (!user) {
-       // Create dummy user only if not already created
-       user = await userService.createUser({
-         firstname: 'Guest',
-         lastname: 'Usr',
-         phone,
-         email,
-         password: 'dummy@123', // a placeholder password
-       });
-     }
-   }
- 
-   // Generate token
-   const token = await user.generateAuthToken();
- 
-   // Cleanup OTP
-   await otpModel.deleteOne({ phone });
- 
-   // res.cookie('token', token);
+    try {
+        //req ki body se email aayega
+        const {email}  = req.body;
+        
+        
+        //validator email is valid or not
+       
+        const valid = validator.isEmail(email);
+        
+        if (!valid) {
+            return res.status(401).json({
+                success: false,
+                message: "Please Enter Correct Email"
+            })
+        }
+        
 
-   res.cookie('token', token, {
-      httpOnly: true,
-      secure: false,               // true in production with HTTPS
-      sameSite: 'Lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-    
-   res.status(200).json({ user, token });
- };
+        const checkEmail = await User.findOne({ email });
+        
+        if (checkEmail) {
+            return res.status(401).json({
+                success: false,
+                message: "The Email is Already Register"
+            })
+        }
+
+        //generateotp
+        var generateotp = otpGenerator.generate(6, {
+            upperCaseAlphabets: false,
+            lowerCaseAlphabets: false,
+            specialChars: false,
+
+        })
+        //var generateotp=crypto.randomInt(10 ** (6 - 1), 10 ** length).toString();
+        //console.log("otp generate:", generateotp);
+
+        const result = await OTP.findOne({ otp: generateotp });
+       
+       
+        //check unique
+        while (result) {
+            generateotp = otpGenerator.generate(6, {
+                upperCaseAlphabets: false,
+                lowerCaseAlphabets: false,
+                specialChars: false,
+            })
+            result = await OTP.findOne({ Otp: generateotp });
+        }
+        const payload = { Email: email, Otp: generateotp };
+        
+        
+
+        const body = await OTP.create(payload);
+        console.log(body);
+
+        res.status(201).json({
+            success: true,
+            message: 'OTP Send Successfully',
+            data: body,
+        })
+
+
+    } catch (err) {
+        return res.status(501).json({
+            success: false,
+            message: err.message,
+            data: "Failed to send otp"
+        })
+    }
+
+
+}
  
 
 
@@ -86,13 +89,36 @@ module.exports.registerUser=async(req,res,next)=>{
     return res.status(400).json({errors:errors.array()});
    }
    
-   const { fullname, email, password } = req.body;
+   const { fullname, email, password ,otp} = req.body;
+   const valid = validator.isEmail(email);
+        
+        if (!valid) {
+            throw new Error("Please Enter Correct Email")
+        }
    
    const isUserExists = await User.findOne({ email });
    
    if (isUserExists) {
       return res.status(400).json({ error: 'User with this email already exists' });
    }
+
+   const recentOtp=await OTP.find({Email:email}).sort({createdAt:-1}).limit(1);
+        console.log("recent otp",recentOtp);
+
+        //validate
+        if(recentOtp.length==0|| !recentOtp[0]){
+            return res.status(401).json({
+                success: false,
+                message: "OTP Not Fount"
+            })
+        }
+
+        else if( otp.toString()!==recentOtp[0].Otp.toString()){
+            return res.status(401).json({
+                success: false,
+                message: "Invalid OTP. ENter Valid OTP"
+            })
+        }
 
    const hashedPassword=await User.hashPassword(password);
    const user=await userService.createUser({firstname:fullname.firstname,lastname:fullname.lastname,email,password:hashedPassword});

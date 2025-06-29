@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { CaptainDataContext } from '../context/CaptainContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import OtpInput from 'react-otp-input'
 
 function CaptainSignup() {
   const navigate = useNavigate()
@@ -23,6 +24,26 @@ function CaptainSignup() {
   })
 
   const {captain, setCaptain} = React.useContext(CaptainDataContext)  
+  const [OTP, setOtp] = useState("");
+  const [otpmodal, setOtpModal] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+
+  async function submitHandle(e) {
+
+        e.preventDefault()
+        if (otpLoading) return;
+        setOtpLoading(true);
+        
+        try {
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/send-otp`, { email: formData.email });
+        console.log(response.data);
+        setOtpModal(true);
+    } catch (error) {
+        console.log("SENDOTP API ERROR............", error);
+    } finally {
+        setOtpLoading(false);
+    }
+    }
 
   const handleChange = (e) => {
     setFormData({
@@ -84,7 +105,7 @@ function CaptainSignup() {
       <div className='mb-8'>
         <h2 className='my-4  font-bold text-2xl font-mono'>-RideUrWay-</h2>
         
-        <form onSubmit={submitHandler}  >
+        <form  >
           <div className='flex gap-2'>
           <div>
           <h3 className='text-lg font-medium mb-2'>First Name</h3>
@@ -206,12 +227,29 @@ function CaptainSignup() {
           />
 
           <button
-            type="submit"
+            type="button"
+            onClick={(e) => submitHandle(e)}
             className='bg-[#111] text-white font-semibold mb-4 rounded px-2 py-2 w-full text-lg'
           >
-           Create Captain Account
+           {otpLoading ? "Sending OTP..." : "Send OTP"}
           </button>
-
+           {otpmodal &&
+                       <form  >
+                         <OtpInput
+                           value={OTP}
+                           onChange={setOtp}
+                           numInputs={6}
+                           renderSeparator={<span>-</span>}
+                           renderInput={(props) => <input
+                             {...props}
+                             className="text-black bg-white border mx-auto  border-black   h-12 text-xl text-center rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-4"
+                           />} />
+                         <button type='button' onClick={(e)=>submitHandler(e)} className='rounded-md px-4 py-2 bg-green-500 text-white text-xl w-full my-4 cursor-pointer'>
+                           Verify Email
+                         </button>
+           
+                       </form>
+                     }
           <p className='text-center'>
             Already have an account? <NavLink to='/CaptainLogin' className="text-blue-600">Login</NavLink> 
           </p>
