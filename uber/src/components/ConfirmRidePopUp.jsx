@@ -51,12 +51,6 @@ const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname ||
             }
           })
         );
-        
-        
-
-       
-        
-
       props.setConfirmRidePopPanel(false)
         
 
@@ -93,7 +87,13 @@ const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname ||
                 alt="Ride Image"
                 className="h-20 w-20 object-contain rounded-full bg-gray-100 p-1 shadow-lg mb-4"
               />
-              <p className="text-gray-600 font-bold italic mb-2">{props?.confirmRideData?.user?.fullname?.firstname + " " + props?.confirmRideData?.user?.fullname?.lastname}</p>
+              {/* <p className="text-gray-600 font-bold italic mb-2">{props?.confirmRideData?.user?.fullname?.firstname + " " + props?.confirmRideData?.user?.fullname?.lastname}</p> */}
+              <p className="text-gray-600 font-bold italic mb-2">
+  {(props?.confirmRideData?.user?.fullname?.firstname || props?.confirmRideData?.user?.firstname || '') + " " + 
+   (props?.confirmRideData?.user?.fullname?.lastname || props?.confirmRideData?.user?.lastname || '')}
+</p>
+
+            
             </div>
             <div>
               <div className="text-gray-600 font-semibold mb-2">Pickup Location:<p className='text-base'> {props?.confirmRideData?.pickup}</p></div>
@@ -121,3 +121,5 @@ const fullName = `${user.fullname?.firstname || ''} ${user.fullname?.lastname ||
 }
 
 export default ConfirmRidePopUp
+
+
