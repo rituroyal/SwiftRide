@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { UserDataContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
+import { toast } from 'react-toastify';
 function UserLogin(){ 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -12,25 +12,31 @@ function UserLogin(){
   const navigate = useNavigate()
   
 
-    const submitHandler=async(e)=>{
-        e.preventDefault();
-       
-        const userData = {
-            email: email,
-            password: password
-      }
+const submitHandler = async (e) => {
+  e.preventDefault();
+  const userData = {
+      email: email,
+      password: password
+  }
+  try {
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
-      if (response.status === 200) {
-        const data = response.data
-        setUser(data.user)
-        localStorage.setItem('token', data.token)
-        navigate('/home')
+      if (response.status === 200 && response.data && response.data.user) {
+          setUser(response.data.user)
+          localStorage.setItem('token', response.data.token)
+          toast.success('Login successful!');
+          setTimeout(() => {
+              navigate('/home')
+          }, 1000); // 1 second delay for toast
       } else {
-        alert('Login failed. Please check your credentials.')
+          toast.error('Login failed. Please check your credentials.');
       }
-        setEmail('')
-        setPassword('')
-    }
+  } catch (error) {
+      toast.error(error.response?.data?.message || 'Login failed. Please check your credentials.');
+  }
+  setEmail('')
+  setPassword('')
+}
+// ...existing code...
   return (
     <div className='p-7 h-screen flex flex-col justify-between'>
         <div>
