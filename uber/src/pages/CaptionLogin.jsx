@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { CaptainDataContext } from '../context/CaptainContext'
-
+import { toast } from 'react-toastify';
 function CaptionLogin() {
     const [email, setEmail] = useState('');
         const [password, setPassword] = useState('');
@@ -14,26 +14,37 @@ function CaptionLogin() {
  
 
 
-        const submitHandler=async(e)=>{
-            e.preventDefault();
-           const captain = {
-             email: email,
-             password: password
-          }
-          
-          const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captain) 
+        
 
-          console.log(response.data, 'captain login response')
-          if(response.data){
-          updateCaptain(response.data.captain)
+const submitHandler = async (e) => {
+  e.preventDefault();
+  const captain = {
+      email: email,
+      password: password
+  }
+  try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captain);
 
-            localStorage.setItem('token', response.data.token) // Store the token in localStorage
-            localStorage.setItem('isCaptain', 'true');
-          }
-          setEmail('')
-          setPassword('')
-          navigate('/captain-home')
-        }
+      if (response.data && response.data.captain) {
+          updateCaptain(response.data.captain);
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('isCaptain', 'true');
+          toast.success('Login successful!');
+          setTimeout(() => {
+              navigate('/captain-home');
+          }, 1000); // 1 second delay for toast
+      } else {
+          toast.error('Login failed. Please check your credentials.');
+      }
+  } catch (error) {
+      toast.error(error.response?.data?.message || 'Login failed. Please check your credentials.');
+  }
+  setEmail('');
+  setPassword('');
+}
+
+
+
   return (
     <div className='p-7 h-screen flex flex-col justify-between'>
         <div>

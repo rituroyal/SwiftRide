@@ -14,7 +14,8 @@ import Riding from './pages/Riding.jsx'
 import CaptainRiding from './pages/CaptainRiding.jsx'
 import 'remixicon/fonts/remixicon.css'
 import OtpLogin from './pages/OtpLogin.jsx'
-
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 function App() {
   return (
     <div>
@@ -47,6 +48,7 @@ function App() {
         } />
         {/* Add more routes as needed */}
       </Routes>
+      <ToastContainer />
     </div>
   )
 }
